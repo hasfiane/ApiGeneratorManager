@@ -1,0 +1,31 @@
+name: Dependency checks
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  schedule:
+    - cron: "23 4 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  security:
+    name: Dependency audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: api-generator-front/package-lock.json
+      - name: Audit frontend dependencies
+        working-directory: api-generator-front
+        run: |
+          npm ci
+          node ../scripts/audit-frontend-dependencies.mjs

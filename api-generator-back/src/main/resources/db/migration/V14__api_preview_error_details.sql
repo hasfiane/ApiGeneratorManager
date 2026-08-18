@@ -1,0 +1,5 @@
+ALTER TABLE api_preview
+    ADD COLUMN IF NOT EXISTS error_code VARCHAR(128);
+
+ALTER TABLE api_preview
+    ADD COLUMN IF NOT EXISTS error_hint VARCHAR(2048);

@@ -1,0 +1,11 @@
+{
+  "expiresOn": "2026-09-30",
+  "exceptions": [
+    {
+      "advisory": "GHSA-qwww-vcr4-c8h2",
+      "packages": ["react-router", "react-router-dom"],
+      "requiredVersion": "7.18.1",
+      "reason": "The dashboard is a client-only Vite SPA and does not enable React Router RSC actions. npm has no published fixed stable release yet (the advisory requires 8.3.0)."
+    }
+  ]
+}

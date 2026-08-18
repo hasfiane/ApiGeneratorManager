@@ -1,0 +1,56 @@
+{
+  "name": "api-generator-dashboard",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "start": "vite",
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "lint": "eslint .",
+    "type-check": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "7.18.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "@testing-library/jest-dom": "^6.8.0",
+    "@testing-library/react": "^16.1.0",
+    "@types/react": "^18.3.5",
+    "@types/react-dom": "^18.3.0",
+    "@typescript-eslint/eslint-plugin": "^8.65.0",
+    "@typescript-eslint/parser": "^8.65.0",
+    "@vitejs/plugin-react": "^6.0.1",
+    "eslint": "^9.39.2",
+    "eslint-plugin-react-hooks": "^5.1.0-rc.0",
+    "eslint-plugin-react-refresh": "^0.4.11",
+    "globals": "^17.3.0",
+    "jsdom": "^25.0.1",
+    "typescript": "^5.5.4",
+    "vite": "^8.1.5",
+    "vitest": "^4.1.5"
+  },
+  "overrides": {
+    "@eslint/config-array": {
+      "minimatch": "^10.2.5"
+    },
+    "@eslint/eslintrc": {
+      "minimatch": "^10.2.5"
+    },
+    "eslint": {
+      "minimatch": "^10.2.5"
+    },
+    "form-data": "^4.0.6",
+    "js-yaml": "^5.2.2",
+    "postcss": "^8.5.23",
+    "react-router": "7.18.1",
+    "ws": "^8.20.1",
+    "brace-expansion": "^5.0.9",
+    "nanoid": "^3.3.18"
+  }
+}

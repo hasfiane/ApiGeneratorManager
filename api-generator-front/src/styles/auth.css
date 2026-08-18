@@ -1,0 +1,389 @@
+/*
+ * Extracted from ../styles.css without intentional visual changes.
+ * Keep cascade order controlled by ../styles.css imports.
+ */
+
+
+
+.onboardingPresetCallout {
+  margin-bottom: 18px;
+}
+
+
+
+.onboardingPresetGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 12px;
+}
+
+
+
+.onboardingPresetCard {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  min-height: 176px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--surface);
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.14s ease, border-color 0.14s ease, box-shadow 0.14s ease, background 0.14s ease;
+}
+
+
+
+.onboardingPresetCard:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--accent) 28%, transparent);
+  background: color-mix(in srgb, var(--accent-soft) 36%, var(--surface));
+  box-shadow: var(--shadow);
+}
+
+
+
+.onboardingPresetCard > .badge {
+  justify-self: start;
+  max-width: 100%;
+}
+
+
+
+.onboardingPresetCard strong {
+  font-size: 16px;
+  line-height: 1.2;
+  min-width: 0;
+}
+
+
+
+.presetTitleRow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+
+
+.presetTitleRow strong {
+  min-width: 0;
+}
+
+
+
+.onboardingPresetCard span:not(.badge),
+.onboardingPresetCard small {
+  color: var(--muted);
+  line-height: 1.5;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+
+
+.onboardingPresetCard small {
+  font-family: var(--mono);
+  font-size: 11px;
+  word-break: break-word;
+}
+
+
+
+.brandLogo--default,
+.brandLogo--auth {
+  width: 92px;
+  height: 66px;
+}
+
+
+
+.techBadgeIcon--preset {
+  margin-bottom: 2px;
+}
+
+
+
+.authPageSolo {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+
+
+.authSoloCard {
+  width: min(440px, calc(100vw - 32px));
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+
+
+.authSoloTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+
+
+.authSoloBrand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+
+
+.authSoloMark {
+  flex: 0 0 auto;
+}
+
+
+
+.authSoloName {
+  font-weight: 860;
+}
+
+
+
+.authSoloTag,
+.authSoloSub {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+
+
+.authSoloHead {
+  margin-bottom: 16px;
+}
+
+
+
+.authSoloTitle {
+  font-size: 24px;
+  font-weight: 860;
+}
+
+
+
+.authSoloSub {
+  margin-top: 6px;
+  line-height: 1.5;
+}
+
+
+
+.sep {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 10px;
+  margin: 16px 0;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 750;
+}
+
+
+
+.sep span {
+  height: 1px;
+  background: var(--line);
+}
+
+
+
+.authForm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+
+
+.errorBox {
+  padding: 11px 12px;
+  border: 1px solid color-mix(in srgb, var(--bad) 28%, transparent);
+  border-radius: var(--radius);
+  background: var(--bad-soft);
+  color: var(--bad);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+
+
+.infoBox {
+  padding: 11px 12px;
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+  border-radius: var(--radius);
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+
+
+.brandLogo--auth {
+  width: 92px;
+  height: 66px;
+}
+
+
+
+.authPageSolo {
+  position: relative;
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+  padding: 32px 16px;
+  background:
+    radial-gradient(circle at 16% 18%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 26%),
+    radial-gradient(circle at 86% 12%, color-mix(in srgb, var(--good) 10%, transparent), transparent 24%),
+    linear-gradient(180deg, #f8f9fb 0%, var(--page) 100%);
+}
+
+
+
+.authPageSolo::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--line) 55%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--line) 55%, transparent) 1px, transparent 1px);
+  background-size: 36px 36px;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.42), transparent 72%);
+}
+
+
+
+.authSoloCard {
+  position: relative;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--surface) 96%, transparent);
+  box-shadow: 0 24px 80px rgba(15, 23, 42, 0.1);
+  backdrop-filter: blur(14px);
+}
+
+
+
+.authSoloTop {
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--line);
+}
+
+
+
+.authSoloBrand {
+  min-width: 0;
+}
+
+
+
+.authSoloName {
+  color: var(--ink);
+  letter-spacing: -0.02em;
+}
+
+
+
+.authSoloTitle {
+  letter-spacing: -0.03em;
+}
+
+
+
+.authForm .errorBox,
+.authForm .infoBox {
+  border-radius: 12px;
+}
+
+
+
+.brandLogo--login,
+.brandLogo--auth {
+  width: 44px;
+  height: 44px;
+}
+
+
+
+.authPageSolo {
+  background:
+    radial-gradient(circle at 14% 16%, rgba(37, 99, 235, 0.11), transparent 26%),
+    radial-gradient(circle at 88% 8%, rgba(22, 163, 74, 0.08), transparent 24%),
+    #f8f9fb;
+}
+
+
+
+.authSoloCard {
+  width: min(430px, calc(100vw - 32px));
+  padding: 24px;
+  border-radius: 18px;
+}
+
+
+
+.authSoloTop {
+  align-items: center;
+}
+
+
+
+.authSoloMark {
+  margin-right: 10px;
+}
+
+
+
+.authSoloTitle {
+  margin-top: 4px;
+  color: var(--ink);
+  font-size: 26px;
+  line-height: 1.12;
+}
+
+
+
+.authSoloSub {
+  line-height: 1.55;
+}
+
+
+
+.authForm {
+  gap: 14px;
+}
+
+
+
+.authForm .field span {
+  font-size: 13px;
+  font-weight: 780;
+}
+
+
+
+.errorBox,
+.infoBox {
+  border-radius: 12px;
+}

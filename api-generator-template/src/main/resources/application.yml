@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: generated-api
+  datasource:
+    url: ${DB_URL:}
+    username: ${DB_USERNAME:}
+    password: ${DB_PASSWORD:}
+server:
+  port: ${API_PORT:${PORT:8080}}
+  forward-headers-strategy: framework
+springdoc:
+  swagger-ui:
+    disable-swagger-default-url: true
+generator:
+  runtime:
+    enabled: true
+  db:
+    type: ${DB_TYPE:POSTGRESQL}
+    url: ${DB_URL:}
+    username: ${DB_USERNAME:}
+    password: ${DB_PASSWORD:}
+    schema: ${DB_SCHEMA:public}
+security:
+  enabled: ${SECURITY_ENABLED:true}
+  bootstrap:
+    username: ${BOOTSTRAP_USER:}
+    password: ${BOOTSTRAP_PASSWORD_HASH:}
+  jwt:
+    secret: ${JWT_SECRET}
+    issuer: ${JWT_ISSUER:generated-api}
+    audience: ${JWT_AUDIENCE:generated-api}
+    expiration-seconds: ${JWT_EXP_SECONDS:3600}

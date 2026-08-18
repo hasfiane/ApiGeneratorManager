@@ -1,0 +1,10 @@
+# Windows / IDE
+.vs/
+.idea/
+*.iml
+
+# Node / build
+node_modules/
+dist/
+.env
+*.tsbuildinfo

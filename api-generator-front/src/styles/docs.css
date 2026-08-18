@@ -1,0 +1,280 @@
+/*
+ * Extracted from ../styles.css without intentional visual changes.
+ * Keep cascade order controlled by ../styles.css imports.
+ */
+
+
+
+.callout {
+  padding: 15px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-soft);
+  margin-bottom: 16px;
+}
+
+
+
+.techBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-soft);
+  color: var(--ink);
+  font-weight: 700;
+}
+
+
+
+.techBadgeIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--accent) 14%, var(--surface));
+  color: var(--accent);
+  flex: 0 0 auto;
+}
+
+
+
+.docTechGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+
+
+.docSteps {
+  display: grid;
+  gap: 12px;
+}
+
+
+
+.docStep,
+.docBlock {
+  padding: 15px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-soft);
+}
+
+
+
+.docStep h4,
+.docBlock h4,
+.docSubsection h4 {
+  margin: 0 0 10px;
+  font-size: 14px;
+}
+
+
+
+.docStep p,
+.docBlock p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+
+
+.docSection {
+  scroll-margin-top: 90px;
+}
+
+
+
+.docLandingCard {
+  position: relative;
+  overflow: hidden;
+}
+
+
+
+.docGuideGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+
+
+.docGuideCard {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 120px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--surface-soft);
+  color: var(--ink);
+  text-decoration: none;
+  transition: border-color 160ms ease, transform 160ms ease, background 160ms ease;
+}
+
+
+
+.docGuideCard:hover {
+  border-color: color-mix(in srgb, var(--accent) 35%, transparent);
+  background: color-mix(in srgb, var(--surface-soft) 78%, var(--accent) 22%);
+  transform: translateY(-1px);
+}
+
+
+
+.docGuideCard strong {
+  font-size: 15px;
+  line-height: 1.2;
+}
+
+
+
+.docGuideCard p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+
+
+.docSectionGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+
+
+.docStepMark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  background: var(--good-soft);
+  color: var(--good);
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+
+
+.codeInline {
+  display: inline-block;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: bottom;
+  white-space: nowrap;
+  font-family: var(--mono);
+  font-size: 12px;
+}
+
+
+
+.figmaCodeWindow {
+  padding: 16px;
+}
+
+
+
+.figmaLogWindow,
+.figmaTerminal {
+  padding: 14px;
+}
+
+
+
+.figmaArticleGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  align-items: stretch;
+}
+
+
+
+.figmaFaqPreview,
+.figmaComparisonTableSection {
+  display: grid;
+  gap: 16px;
+}
+
+
+
+.figmaCard,
+.figmaDocCard,
+.figmaTrustCard,
+.figmaTrustYaml {
+  padding: 24px;
+}
+
+
+
+.figmaDocsHero {
+  padding-top: 72px;
+  padding-bottom: 38px;
+}
+
+
+
+.figmaDocsShell,
+.figmaExampleDetail {
+  display: grid;
+  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+
+
+.figmaDocsContent {
+  display: grid;
+  gap: 18px;
+  min-width: 0;
+}
+
+
+
+.codeWindow,
+.figmaCodeWindow {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+
+
+.logsPanel,
+.figmaTerminal {
+  overflow: auto;
+  white-space: pre-wrap;
+}
+
+
+
+.logsPanel.figmaTerminal {
+  max-height: 280px;
+  line-height: 1.55;
+}
+
+
+
+.logsPanel,
+.logsPanel.figmaTerminal {
+  max-height: 320px;
+  border-radius: 14px;
+  line-height: 1.55;
+}

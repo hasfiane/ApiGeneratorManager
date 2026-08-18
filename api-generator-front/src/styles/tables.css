@@ -1,0 +1,710 @@
+/*
+ * Extracted from ../styles.css without intentional visual changes.
+ * Keep cascade order controlled by ../styles.css imports.
+ */
+
+
+
+.muted,
+.label,
+.trend {
+  color: var(--muted);
+}
+
+
+
+.label {
+  margin: 0 0 7px;
+  font-size: 12px;
+  font-weight: 750;
+  text-transform: uppercase;
+}
+
+
+
+.pill {
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 18%, transparent);
+  background: var(--accent-soft);
+}
+
+
+
+.badge.good {
+  color: var(--good);
+  border-color: color-mix(in srgb, var(--good) 24%, transparent);
+  background: var(--good-soft);
+}
+
+
+
+.badge.warn {
+  color: var(--coral);
+  border-color: color-mix(in srgb, var(--coral) 24%, transparent);
+  background: var(--coral-soft);
+}
+
+
+
+.badge.bad {
+  color: var(--bad);
+  border-color: color-mix(in srgb, var(--bad) 24%, transparent);
+  background: var(--bad-soft);
+}
+
+
+
+.tooltipWrap[data-tooltip]::after,
+.dockerTooltipTarget[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 10px);
+  z-index: 50;
+  width: max-content;
+  max-width: min(300px, calc(100vw - 36px));
+  padding: 10px 12px;
+  border: 1px solid color-mix(in srgb, var(--bad) 26%, var(--line));
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--surface) 94%, var(--bad) 6%);
+  color: var(--ink);
+  box-shadow: 0 18px 42px rgba(15, 23, 42, 0.14);
+  font-size: 12px;
+  font-weight: 760;
+  line-height: 1.45;
+  opacity: 0;
+  pointer-events: none;
+  text-align: left;
+  transform: translate(-50%, 6px);
+  transition: opacity 0.14s ease, transform 0.14s ease;
+  white-space: normal;
+}
+
+
+
+.tooltipWrap[data-tooltip]::before,
+.dockerTooltipTarget[data-tooltip]::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 4px);
+  z-index: 51;
+  width: 10px;
+  height: 10px;
+  border-right: 1px solid color-mix(in srgb, var(--bad) 26%, var(--line));
+  border-bottom: 1px solid color-mix(in srgb, var(--bad) 26%, var(--line));
+  background: color-mix(in srgb, var(--surface) 94%, var(--bad) 6%);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 6px) rotate(45deg);
+  transition: opacity 0.14s ease, transform 0.14s ease;
+}
+
+
+
+.tooltipWrap[data-tooltip-placement="bottom"]::after,
+.dockerTooltipTarget[data-tooltip-placement="bottom"]::after {
+  top: calc(100% + 10px);
+  bottom: auto;
+  transform: translate(-50%, -6px);
+}
+
+
+
+.tooltipWrap[data-tooltip-placement="bottom"]::before,
+.dockerTooltipTarget[data-tooltip-placement="bottom"]::before {
+  top: calc(100% + 4px);
+  bottom: auto;
+  border-right: 0;
+  border-bottom: 0;
+  border-left: 1px solid color-mix(in srgb, var(--bad) 26%, var(--line));
+  border-top: 1px solid color-mix(in srgb, var(--bad) 26%, var(--line));
+  transform: translate(-50%, -6px) rotate(45deg);
+}
+
+
+
+.betaLine {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 1px solid color-mix(in srgb, var(--gold) 28%, transparent);
+  border-radius: 16px;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--gold-soft) 82%, white 18%), color-mix(in srgb, var(--surface) 84%, white 16%));
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.45;
+  box-shadow: var(--shadow-soft);
+}
+
+
+
+.app {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 284px minmax(0, 1fr);
+  transition: grid-template-columns 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+
+
+.sidebar {
+  position: sticky;
+  top: 0;
+  width: 284px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 18px 14px;
+  border-right: 1px solid var(--line);
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  backdrop-filter: blur(18px);
+  transition:
+    width 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    padding 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  overflow-x: hidden;
+}
+
+
+
+.sidebar.collapsed {
+  width: 84px;
+  padding-inline: 10px;
+  opacity: 1;
+  border-right-color: var(--line);
+  gap: 18px;
+  pointer-events: auto;
+}
+
+
+
+.brandCopy {
+  min-width: 0;
+  max-width: 140px;
+  transition:
+    opacity 0.22s ease,
+    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    max-width 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+
+
+.brandCopy.hidden {
+  opacity: 0;
+  max-width: 0;
+  transform: translateX(-8px);
+  overflow: hidden;
+}
+
+
+
+.logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius);
+  background: var(--ink);
+  color: var(--surface);
+  font-size: 12px;
+  font-weight: 860;
+}
+
+
+
+.brandLogo--sidebar {
+  width: 86px;
+  height: 62px;
+  transition:
+    width 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    height 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+
+
+.sidebar.collapsed .brandLogo--sidebar {
+  width: 44px;
+  height: 32px;
+}
+
+
+
+.brandLogoImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: left center;
+}
+
+
+
+.navItemContent {
+  display: inline-grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+  transition: gap 0.22s ease;
+}
+
+
+
+.navItemLabel {
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 160px;
+  opacity: 1;
+  transform: translateX(0);
+  transition:
+    max-width 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.18s ease,
+    transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+
+
+.navItemLabel.hidden {
+  max-width: 0;
+  opacity: 0;
+  transform: translateX(-6px);
+}
+
+
+
+.sidebarFooter {
+  margin-top: auto;
+  padding: 6px;
+  display: grid;
+  gap: 10px;
+  transition: padding 0.22s ease, gap 0.22s ease;
+}
+
+
+
+.sidebarCollapseAction {
+  width: 100%;
+}
+
+
+
+.flagIcon svg {
+  display: block;
+  width: 24px;
+  height: 16px;
+  border-radius: 2px;
+}
+
+
+
+.main {
+  min-width: 0;
+  padding: 24px;
+  transition: padding 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+
+
+.hgroup {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0;
+}
+
+
+
+.hgroup p {
+  max-width: 780px;
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+
+
+.tableWrap {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 620px;
+}
+
+
+
+.table th,
+.table td {
+  padding: 13px 14px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  font-size: 13px;
+  vertical-align: middle;
+}
+
+
+
+.table th {
+  background: var(--surface-soft);
+  color: var(--muted);
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+
+
+.table tr:last-child td {
+  border-bottom: 0;
+}
+
+
+
+.table tr:hover td {
+  background: color-mix(in srgb, var(--accent) 5%, transparent);
+}
+
+
+
+.kpi .trend {
+  margin-top: 12px;
+  font-size: 13px;
+}
+
+
+
+.field span {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 780;
+  text-transform: uppercase;
+}
+
+
+
+.docErrorCard {
+  padding: 15px;
+  border: 1px solid color-mix(in srgb, var(--bad) 18%, transparent);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--surface) 90%, var(--bad-soft) 10%);
+}
+
+
+
+.docErrorCard strong {
+  display: block;
+  margin-bottom: 10px;
+}
+
+
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--line);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+
+.errorBoundaryCard {
+  width: min(480px, 100%);
+  padding: 32px;
+  text-align: center;
+  border: 1px solid color-mix(in srgb, var(--bad) 26%, transparent);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+
+
+.adminMetricGrid .metric strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 30px;
+  line-height: 1;
+}
+
+
+
+.adminMetricGrid .metric span {
+  display: block;
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+
+
+.adminStatusRow strong {
+  font-size: 20px;
+}
+
+
+
+.adminOpsBar strong {
+  color: var(--ink);
+}
+
+
+
+.adminSecretValue {
+  max-width: 100%;
+  margin: 10px 0;
+  user-select: all;
+}
+
+
+
+.adminDatabaseToolUrl {
+  max-width: 100%;
+  margin-top: 10px;
+}
+
+
+
+.publicComparisonTableWrap {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+
+
+.figmaVisualHeader strong {
+  font-size: 15px;
+}
+
+
+
+.figmaFaqPreview {
+  max-width: min(980px, calc(100vw - 48px));
+}
+
+
+
+.figmaTableWrap table {
+  width: 100%;
+  min-width: 620px;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+
+
+.brandLogoImage {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+
+
+.brandLogo--default {
+  width: 36px;
+  height: 36px;
+}
+
+
+
+.brandLogo--sidebar {
+  width: 86px;
+  height: 62px;
+}
+
+
+
+.visualIcon {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  color: currentColor;
+  vertical-align: -3px;
+}
+
+
+
+.visualIcon path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+
+
+.panelTitleWithIcon {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+
+
+.panelTitleWithIcon .visualIcon,
+.panelTitleWithIcon svg {
+  color: var(--accent);
+}
+
+
+
+.tableWrap,
+.figmaTableWrap {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+
+
+.table th,
+.figmaTableWrap th {
+  font-weight: 760;
+  letter-spacing: 0.01em;
+}
+
+
+
+.table tr:hover td {
+  background: color-mix(in srgb, var(--accent) 5%, transparent);
+}
+
+
+
+.pagination,
+.pager,
+.paginationControls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+
+
+.app {
+  background:
+    radial-gradient(circle at 12% 0%, color-mix(in srgb, var(--accent) 9%, transparent), transparent 30%),
+    var(--page);
+}
+
+
+
+.main {
+  min-width: 0;
+}
+
+
+
+.header {
+  border: 1px solid color-mix(in srgb, var(--line) 78%, transparent);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--surface) 94%, transparent);
+  box-shadow: var(--shadow-soft);
+}
+
+
+
+.sidebar {
+  border-right: 1px solid color-mix(in srgb, var(--line) 82%, transparent);
+}
+
+
+
+.figmaFaqList,
+.figmaHowStepper {
+  width: min(980px, calc(100vw - 48px));
+  margin: 0 auto;
+  padding: 24px 0 64px;
+}
+
+
+
+.brandLogoImage {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+
+
+.brandLogo--default {
+  width: 36px;
+  height: 36px;
+}
+
+
+
+.brandLogo--app,
+.brandLogo--sidebar {
+  width: 32px;
+  height: 32px;
+}
+
+
+
+.sidebar.collapsed .brandLogo--app,
+.sidebar.collapsed .brandLogo--sidebar {
+  width: 30px;
+  height: 30px;
+}
+
+
+
+.app {
+  background:
+    radial-gradient(circle at 8% 0%, rgba(37, 99, 235, 0.08), transparent 30%),
+    #f8f9fb;
+}
+
+
+
+.sidebar {
+  background: color-mix(in srgb, var(--surface) 96%, transparent);
+}
+
+
+
+.tableWrap,
+.figmaTableWrap {
+  border-radius: 14px;
+}
+
+
+
+.table th,
+.figmaTableWrap th {
+  background: color-mix(in srgb, var(--accent) 7%, var(--surface-soft));
+}

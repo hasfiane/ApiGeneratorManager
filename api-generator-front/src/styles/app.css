@@ -1,0 +1,271 @@
+/*
+ * Extracted from ../styles.css without intentional visual changes.
+ * Keep cascade order controlled by ../styles.css imports.
+ */
+
+
+
+.app.app--sidebar-collapsed {
+  grid-template-columns: 84px minmax(0, 1fr);
+}
+
+
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 8px;
+}
+
+
+
+.sidebar.collapsed .brand {
+  justify-content: center;
+  padding-inline: 0;
+  min-height: 60px;
+}
+
+
+
+.brandLogo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  flex: 0 0 auto;
+}
+
+
+
+.brandTitle {
+  font-weight: 840;
+  white-space: nowrap;
+}
+
+
+
+.brandSubtitle {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+
+
+.navItemContent > svg {
+  justify-self: center;
+  display: block;
+  line-height: 0;
+}
+
+
+
+.navItemContent.collapsed {
+  grid-template-columns: 20px;
+  gap: 0;
+  justify-content: center;
+  line-height: 0;
+}
+
+
+
+.navSubmenu {
+  display: grid;
+  gap: 6px;
+  margin: 2px 0 8px 18px;
+  padding-left: 14px;
+  border-left: 1px solid var(--line);
+}
+
+
+
+.sidebar.collapsed .sidebarFooter {
+  justify-items: center;
+}
+
+
+
+.nav small {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 11px;
+}
+
+
+
+.main--sidebar-collapsed {
+  padding-left: 22px;
+}
+
+
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+
+
+
+.overlay {
+  display: none;
+}
+
+
+
+.kpi {
+  min-height: 142px;
+}
+
+
+
+.kpi .value {
+  margin-top: 10px;
+  font-size: 34px;
+  font-weight: 880;
+  line-height: 1;
+}
+
+
+
+.adminDashboardGrid {
+  align-items: start;
+}
+
+
+
+.adminStatusList,
+.adminErrorList {
+  display: grid;
+  gap: 10px;
+}
+
+
+
+.adminStatusRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-soft);
+}
+
+
+
+.adminErrorItem {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-soft);
+}
+
+
+
+.adminErrorItem h4 {
+  margin: 10px 0 4px;
+  font-size: 14px;
+}
+
+
+
+.adminErrorItem p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+
+
+.adminErrorItem small {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+
+
+.adminOpsBar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-soft);
+  color: var(--muted);
+  font-size: 13px;
+}
+
+
+
+.adminSecretCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+  border-color: rgba(220, 38, 38, 0.28);
+  background: rgba(254, 242, 242, 0.72);
+}
+
+
+
+.adminDatabaseTool {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+
+
+.brandLogo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  flex: 0 0 auto;
+}
+
+
+
+.brandLogo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  overflow: hidden;
+}
+
+
+
+.main {
+  padding-top: 28px;
+}
+
+
+
+.brand {
+  gap: 10px;
+}

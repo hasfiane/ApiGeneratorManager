@@ -1,0 +1,592 @@
+/*
+ * Extracted from ../styles.css without intentional visual changes.
+ * Keep cascade order controlled by ../styles.css imports.
+ */
+
+
+
+* {
+  box-sizing: border-box;
+}
+
+
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  box-shadow: var(--shadow-soft);
+  padding: 18px;
+}
+
+
+
+.panelHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+
+
+.panelTitle {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 820;
+}
+
+
+
+.panelText {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+
+
+.pill,
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 30px;
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface-soft);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+
+
+/* =========================
+   BUTTONS
+   ========================= */
+
+
+
+.tooltipWrap,
+.dockerTooltipTarget {
+  position: relative;
+}
+
+
+
+.tooltipWrap {
+  display: inline-flex;
+}
+
+
+
+/* =========================
+   GENERIC LAYOUT
+   ========================= */
+
+
+
+.grid {
+  display: grid;
+  gap: 16px;
+}
+
+
+
+.hr {
+  height: 1px;
+  margin: 16px 0;
+  background: var(--line);
+}
+
+
+
+.code {
+  margin: 0;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #101515;
+  color: #dff8ef;
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+
+
+/* =========================
+   ONBOARDING / PRESETS
+   ========================= */
+
+
+
+/* =========================
+   BETA LINE
+   ========================= */
+
+
+
+.betaLineCompact {
+  min-height: 36px;
+  padding: 6px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 760;
+  box-shadow: none;
+}
+
+
+
+.betaLine .badge {
+  flex: 0 0 auto;
+}
+
+
+
+/* =========================
+   APP SHELL
+   ========================= */
+
+
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 20px;
+}
+
+
+
+.hgroup h1 {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.12;
+}
+
+
+
+/* =========================
+   LANDING
+   ========================= */
+
+
+
+/* =========================
+   AUTH
+   ========================= */
+
+
+
+.googleIcon {
+  display: inline-block;
+  flex: 0 0 auto;
+}
+
+
+
+.switchRow {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+
+
+/* =========================
+   DOCS
+   ========================= */
+
+
+
+.docColumn {
+  display: grid;
+  gap: 12px;
+}
+
+
+
+.docList,
+.docNumbered {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+
+
+.docNumbered {
+  padding-left: 0;
+  list-style: none;
+}
+
+
+
+.docNumbered li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+}
+
+
+
+.docNumbered li + li {
+  margin-top: 10px;
+}
+
+
+
+.docScreenshotHint {
+  margin-top: 12px;
+}
+
+
+
+.docSubsection {
+  margin-top: 16px;
+}
+
+
+
+.docErrorGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+
+
+.docErrorCard p {
+  margin: 7px 0 0;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+
+
+.docErrorCard span {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+
+
+/* =========================
+   LOADING / ERROR
+   ========================= */
+
+
+
+.loadingSpinner,
+.errorBoundary {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+}
+
+
+
+.errorBoundaryIcon {
+  margin-bottom: 14px;
+  font-size: 42px;
+}
+
+
+
+.errorBoundaryCard h2 {
+  margin: 0 0 10px;
+  font-size: 20px;
+}
+
+
+
+.errorBoundaryCard .muted {
+  margin-bottom: 22px;
+  font-size: 14px;
+}
+
+
+
+iframe {
+  display: block;
+  background: var(--surface);
+}
+
+
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+
+
+
+/* =========================
+   ADMIN DASHBOARD
+   ========================= */
+
+
+
+.errorCallout {
+  border-color: color-mix(in srgb, var(--bad) 24%, var(--line));
+  background: var(--bad-soft);
+}
+
+
+
+/* =========================
+   PUBLIC COMPATIBILITY
+   ========================= */
+
+
+
+/* =========================
+   FIGMA MAKE APPLIED SYSTEM
+   ========================= */
+
+
+
+.figmaActions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 28px;
+}
+
+
+
+.figmaProofPills {
+  margin-top: 26px;
+}
+
+
+
+.figmaVisualHeader div {
+  display: grid;
+  gap: 4px;
+}
+
+
+
+.figmaInputChoice {
+  display: grid;
+  gap: 4px;
+  padding: 10px 11px;
+}
+
+
+
+.figmaVisualBottom {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(180px, 0.8fr);
+  gap: 12px;
+}
+
+
+
+.figmaLogWindow span {
+  display: block;
+  margin-bottom: 8px;
+  color: #64748b;
+  font-size: 11px;
+}
+
+
+
+.figmaLogWindow p {
+  margin: 0;
+  color: #94a3b8;
+  font-size: 11px;
+}
+
+
+
+.figmaStep,
+.figmaFeatureCard {
+  padding: 18px;
+}
+
+
+
+.figmaFeatureCard {
+  font-weight: 650;
+}
+
+
+
+.figmaCallout {
+  margin: 16px 0;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+
+
+.figmaChipGrid {
+  margin-top: 14px;
+}
+
+
+
+.figmaFullSpan {
+  grid-column: 1 / -1;
+}
+
+
+/* =========================
+   RESTORED APP SAFETY + FIGMA ISOLATION
+   ========================= */
+
+
+
+.figmaInputChoice {
+  grid-template-columns: auto minmax(0, 1fr);
+}
+
+
+
+.figmaInputChoice small {
+  grid-column: 2;
+}
+
+
+
+.figmaFeatureCard {
+  display: grid;
+  gap: 10px;
+}
+
+
+
+.figmaCallout {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+
+
+.badge,
+.figmaBadge {
+  white-space: nowrap;
+}
+
+
+
+/* =========================
+   FIGMA SYSTEM EXTENSIONS
+   ========================= */
+
+
+
+.header h1 {
+  letter-spacing: -0.035em;
+}
+
+
+
+.figmaYamlDropzone {
+  position: relative;
+}
+
+
+
+.figmaFaqList {
+  display: grid;
+  gap: 12px;
+}
+
+
+
+.figmaFaqItem summary::-webkit-details-marker {
+  display: none;
+}
+
+
+
+.figmaFaqItem[open] summary::after {
+  content: "-";
+}
+
+
+
+.figmaHowStepper {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+}
+
+
+
+.figmaHowStepHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+
+
+/* =========================
+   FINAL VISUAL CORRECTIONS
+   ========================= */
+
+
+
+.header {
+  padding: 20px;
+}
+
+
+
+.figmaYamlDropzone {
+  overflow: hidden;
+}
+
+
+
+.badge {
+  min-height: 24px;
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 820;
+}
+
+
+
+.badge.good {
+  background: var(--good-soft);
+  color: color-mix(in srgb, var(--good) 78%, #064e3b);
+}
+
+
+
+.badge.warn {
+  background: var(--gold-soft);
+  color: #b45309;
+}
+
+
+
+.badge.bad {
+  background: var(--bad-soft);
+  color: color-mix(in srgb, var(--bad) 82%, #7f1d1d);
+}

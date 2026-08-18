@@ -1,0 +1,618 @@
+/*
+ * Extracted from ../styles.css without intentional visual changes.
+ * Keep cascade order controlled by ../styles.css imports.
+ */
+
+
+
+
+@media (min-width: 980px) {
+  .grid.cols-2 {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .grid.cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+
+
+@media (max-width: 1180px) {
+  .landingNav {
+    align-items: flex-start;
+    display: grid;
+    gap: 14px;
+  }
+
+  .landingLinks {
+    width: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    justify-content: stretch;
+    column-gap: 12px;
+    row-gap: 10px;
+  }
+
+  .landingLinksMain {
+    justify-content: flex-start;
+  }
+
+  .landingLinksUtility {
+    justify-content: flex-end;
+  }
+
+  .landingHeroShell {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    padding-top: 36px;
+  }
+
+  .landingFeatureGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .landingProofGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+
+
+@media (max-width: 979px) {
+  .landingNav {
+    position: static;
+    align-items: flex-start;
+    display: grid;
+    padding: 12px 16px;
+  }
+
+  .landingNavApp,
+  .landingContainer,
+  .landingFooterInner {
+    width: min(100vw - 24px, 100%);
+  }
+
+  .landingLinks {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .landingLinksMain {
+    flex: 1 1 100%;
+    justify-content: flex-start;
+  }
+
+  .landingLinksUtility {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .landingLinks .betaLine {
+    width: 100%;
+  }
+
+  .landingHeroShell,
+  .landingRuntimeLayout,
+  .landingSplit {
+    grid-template-columns: 1fr;
+  }
+
+  .landingHeroShell {
+    padding: 28px 0 10px;
+  }
+
+  .landingHeroCopy p {
+    font-size: 16px;
+  }
+
+  .landingHeroCopy h1,
+  .landingSectionHead h2,
+  .landingCtaCard h2 {
+    font-size: 42px;
+  }
+
+  .landingBand {
+    padding: 42px 0;
+  }
+
+  .landingProofGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .landingHeroMeta {
+    grid-template-columns: 1fr;
+  }
+
+  .landingCtaCard,
+  .landingFooterInner {
+    display: grid;
+  }
+
+  .app {
+    display: block;
+  }
+
+  .sidebar {
+    position: fixed;
+    z-index: 60;
+    top: 0;
+    left: -304px;
+    width: 292px;
+    max-width: calc(100vw - 32px);
+    box-shadow: var(--shadow);
+    transition: left 0.18s ease;
+    width: 292px;
+  }
+
+  .sidebar.open {
+    left: 0;
+  }
+
+  .sidebar.collapsed {
+    width: 292px;
+    padding-inline: 14px;
+  }
+
+  .overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: none;
+    background: rgba(21, 23, 26, 0.45);
+  }
+
+  .overlay.show {
+    display: block;
+  }
+
+  .burger,
+  .closeNav {
+    display: inline-flex;
+  }
+
+  .closeNav {
+    margin-left: auto;
+  }
+
+  .main {
+    padding: 16px;
+  }
+
+  .header {
+    display: grid;
+    gap: 14px;
+  }
+
+  .hgroup h1 {
+    font-size: 24px;
+  }
+
+  .topbar {
+    justify-content: stretch;
+  }
+
+  .topbar > *,
+  .topbar .btn {
+    width: 100%;
+  }
+
+  .card {
+    padding: 15px;
+  }
+
+  .grid {
+    gap: 14px;
+  }
+
+  .panelHeader {
+    display: grid;
+  }
+
+  .tableWrap {
+    margin-inline: -2px;
+  }
+
+  .code {
+    max-width: 100%;
+    font-size: 11px;
+  }
+}
+
+
+
+@media (max-width: 560px) {
+  .landingContainer {
+    width: min(100vw - 20px, 100%);
+  }
+
+  .landingLinks .languageToggle {
+    width: auto;
+    min-width: 82px;
+    flex: 0 0 auto;
+  }
+
+  .landingLinksUtility {
+    width: 100%;
+    gap: 8px;
+  }
+
+  .landingActions .btn {
+    width: 100%;
+  }
+
+  .landingHeroCopy h1 {
+    font-size: 38px;
+  }
+
+  .landingHeroCopy p {
+    font-size: 16px;
+  }
+
+  .landingHeroMeta {
+    grid-template-columns: 1fr;
+  }
+
+  .landingFeatureGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .landingSectionHead h2,
+  .landingCtaCard h2 {
+    font-size: 32px;
+  }
+
+  .landingSplit img {
+    min-height: 220px;
+  }
+
+  .landingWorkbench {
+    padding: 20px;
+  }
+
+  .landingRuntimeCard {
+    padding: 20px;
+  }
+
+  .landingCtaCard,
+  .landingCtaCardApp {
+    padding: 24px;
+  }
+
+  .main {
+    padding: 12px;
+  }
+
+  .authPageSolo {
+    padding: 12px;
+  }
+
+  .authSoloCard {
+    width: 100%;
+    padding: 18px;
+  }
+
+  .docSectionGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .hgroup {
+    align-items: flex-start;
+  }
+
+  .hgroup h1 {
+    font-size: 22px;
+  }
+
+  .hgroup p {
+    font-size: 13px;
+  }
+
+  .btn,
+  .primaryBtn,
+  .googleBtn {
+    width: 100%;
+  }
+}
+
+
+
+@media (max-width: 980px) {
+  .figmaHero,
+  .figmaTwoCards,
+  .figmaBoundarySection,
+  .figmaDocsShell,
+  .figmaExampleDetail,
+  .figmaArticleGrid,
+  .figmaGeneratorDashboard {
+    grid-template-columns: 1fr;
+  }
+
+  .figmaStepper,
+  .figmaFeatureGrid,
+  .figmaExamplesGrid,
+  .figmaTrustGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .figmaDocsSidebar {
+    position: static;
+  }
+}
+
+
+
+@media (max-width: 680px) {
+  .figmaPublicHeaderInner,
+  .figmaHeaderActions,
+  .figmaPublicNav,
+  .figmaPublicFooterInner,
+  .figmaFinalCta {
+    flex-wrap: wrap;
+  }
+
+  .figmaPublicNav {
+    order: 3;
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .figmaHeaderActions {
+    margin-left: auto;
+  }
+
+  .figmaBrand small {
+    display: none;
+  }
+
+  .figmaHero,
+  .figmaSection,
+  .figmaDocsHero,
+  .figmaExamplesGrid,
+  .figmaTrustGrid,
+  .figmaTrustYaml,
+  .figmaBoundarySection,
+  .figmaArticleGrid,
+  .figmaFaqPreview,
+  .figmaComparisonTableSection {
+    width: min(100vw - 32px, 100%);
+    padding: 36px 0;
+  }
+
+  .figmaHeroCopy h1,
+  .figmaDocsHero h1 {
+    font-size: 34px;
+  }
+
+  .figmaPipeline,
+  .figmaVisualBottom,
+  .figmaStepper,
+  .figmaFeatureGrid,
+  .figmaExamplesGrid,
+  .figmaTrustGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .figmaPipelineArrow {
+    transform: rotate(90deg);
+  }
+}
+
+
+
+@media (max-width: 680px) {
+  .btn,
+  .primaryBtn,
+  .googleBtn,
+  .figmaButton {
+    min-height: 44px;
+  }
+
+  .figmaPublicHeaderInner {
+    gap: 10px;
+  }
+
+  .figmaHeaderActions {
+    justify-content: flex-end;
+  }
+
+  .figmaHeaderActions .figmaLoginLink {
+    display: inline-flex;
+  }
+
+  .figmaPublicNav {
+    scrollbar-width: thin;
+  }
+
+  .figmaGeneratorPanel,
+  .figmaGeneratorCallout,
+  .figmaYamlDropzone,
+  .figmaGeneratorMode {
+    padding: 16px;
+  }
+}
+
+
+
+@media (max-width: 1100px) {
+  .figmaHowStepper {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .figmaHowStep::after {
+    display: none;
+  }
+}
+
+
+
+@media (max-width: 980px) {
+  .header {
+    border-radius: 16px;
+  }
+
+  .figmaGeneratorDashboard {
+    grid-template-columns: 1fr;
+  }
+
+  .topbar {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+}
+
+
+
+@media (max-width: 680px) {
+  .authPageSolo {
+    align-items: start;
+    padding: 14px;
+  }
+
+  .authSoloTop {
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .authSoloBrand {
+    width: 100%;
+  }
+
+  .authSoloCard {
+    width: 100%;
+    padding: 18px;
+    border-radius: 16px;
+  }
+
+  .brandLogo--auth {
+    width: 68px;
+    height: 48px;
+  }
+
+  .figmaFaqList,
+  .figmaHowStepper {
+    width: min(100vw - 32px, 100%);
+    padding: 10px 0 42px;
+  }
+
+  .figmaHowStepper {
+    grid-template-columns: 1fr;
+  }
+
+  .figmaHowStep {
+    min-height: auto;
+    padding: 18px;
+  }
+
+  .figmaFaqItem summary {
+    padding: 14px 16px;
+  }
+
+  .figmaFaqItem p {
+    padding: 0 16px 16px 42px;
+  }
+
+  .header {
+    gap: 14px;
+    padding: 16px;
+  }
+
+  .hgroup,
+  .topbar {
+    width: 100%;
+  }
+
+  .topbar > *,
+  .topbar .btn,
+  .themeToggle {
+    width: auto;
+  }
+
+  .figmaGeneratorPanel,
+  .figmaGeneratorCallout,
+  .figmaYamlDropzone,
+  .figmaGeneratorMode,
+  .figmaHistoryCard {
+    border-radius: 14px;
+  }
+}
+
+
+
+@media (max-width: 980px) {
+  .figmaGeneratorDashboard {
+    grid-template-columns: 1fr;
+  }
+
+  .main {
+    padding: 18px;
+  }
+
+  .header {
+    margin-bottom: 0;
+  }
+}
+
+
+
+@media (max-width: 680px) {
+  .brandLogo--login,
+  .brandLogo--auth {
+    width: 40px;
+    height: 40px;
+  }
+
+  .brandLogo--app,
+  .brandLogo--sidebar {
+    width: 30px;
+    height: 30px;
+  }
+
+  .authPageSolo {
+    padding: 12px;
+  }
+
+  .authSoloCard {
+    width: 100%;
+    padding: 18px;
+  }
+
+  .authSoloTop {
+    flex-wrap: wrap;
+  }
+
+  .authSoloTitle {
+    font-size: 24px;
+  }
+
+  .figmaPublicHeaderInner {
+    width: min(100vw - 24px, 100%);
+  }
+
+  .figmaPublicNav {
+    max-width: 100%;
+  }
+
+  .figmaHeaderActions {
+    gap: 8px;
+  }
+
+  .figmaLoginLink {
+    padding-inline: 8px;
+  }
+
+  .figmaGeneratorDashboard,
+  .grid,
+  .grid.cols-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .logsPanel,
+  .logsPanel.figmaTerminal {
+    max-height: 240px;
+    font-size: 12px;
+  }
+}

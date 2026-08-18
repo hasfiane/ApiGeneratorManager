@@ -1,0 +1,3805 @@
+/*
+ * Extracted from ../styles.css without intentional visual changes.
+ * Keep cascade order controlled by ../styles.css imports.
+ */
+
+
+
+/* Visual parity pass: keep Figma public visuals isolated and restore app usability. */
+
+
+.figmaPublicHeader {
+  backdrop-filter: saturate(120%) blur(10px);
+}
+
+
+
+.figmaPublicHeaderInner {
+  min-height: 58px;
+  gap: 14px;
+}
+
+
+
+.figmaBrand strong {
+  font-size: 16px;
+}
+
+
+
+.figmaPublicNav {
+  gap: 3px;
+}
+
+
+
+.figmaPublicNav a,
+.figmaLoginLink {
+  min-height: 32px;
+  padding-inline: 9px;
+  font-size: 13px;
+}
+
+
+
+.figmaHeaderActions {
+  gap: 8px;
+}
+
+
+
+.figmaHeaderActions .smallBtn,
+.figmaHeaderActions .languageToggle,
+.figmaHeaderActions .languageToggle button {
+  min-height: 34px;
+}
+
+
+
+.figmaHero {
+  padding: 72px 0 52px;
+  grid-template-columns: minmax(0, 0.94fr) minmax(420px, 1.06fr);
+  gap: 46px;
+}
+
+
+
+.figmaHeroCopy h1 {
+  max-width: 680px;
+}
+
+
+
+.figmaHeroCopy > p {
+  max-width: 560px;
+}
+
+
+
+.figmaProductVisual {
+  padding: 16px;
+  border-radius: 18px;
+  box-shadow: 0 20px 54px rgba(15, 23, 42, 0.08);
+}
+
+
+
+.figmaPipeline {
+  grid-template-columns: minmax(0, 1.08fr) auto minmax(116px, 0.76fr) auto minmax(0, 0.92fr);
+  gap: 10px;
+}
+
+
+
+.figmaPipelineCard {
+  padding: 12px;
+  border-radius: 12px;
+}
+
+
+
+.figmaInputChoice {
+  border-radius: 10px;
+}
+
+
+
+.figmaHero .figmaVisualBottom {
+  margin-top: 12px;
+  grid-template-columns: 1fr;
+}
+
+
+
+.figmaHero .figmaLogWindow {
+  display: none;
+}
+
+
+
+.figmaHero .figmaCodeWindow {
+  max-height: 190px;
+  background: #111827;
+}
+
+
+
+.figmaSection {
+  padding: 58px 0;
+}
+
+
+
+.figmaCard,
+.figmaDocCard,
+.figmaTrustCard,
+.figmaFeatureCard,
+.figmaHistoryCard,
+.figmaGeneratorPanel {
+  border-color: rgba(15, 23, 42, 0.09);
+}
+
+
+
+.figmaBadge {
+  min-height: 23px;
+  padding: 3px 8px;
+  font-size: 11px;
+}
+
+
+
+.figmaMiniTags span,
+.figmaExampleTags span,
+.figmaChipGrid span,
+.figmaProofPills span {
+  background: #f8fafc;
+}
+
+
+
+.figmaDocsShell {
+  grid-template-columns: 244px minmax(0, 1fr);
+  gap: 28px;
+}
+
+
+
+.figmaDocsSidebar {
+  border-radius: 16px;
+}
+
+
+
+.figmaDocsContent {
+  min-width: 0;
+}
+
+
+
+.figmaCodeWindow,
+.figmaTerminal,
+.logsPanel.figmaTerminal {
+  max-width: 100%;
+}
+
+
+
+.authSoloCard {
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.10);
+}
+
+
+
+.authSoloBrand {
+  min-width: 0;
+}
+
+
+
+.authSoloName {
+  font-size: 16px;
+}
+
+
+
+.authSoloTag {
+  font-size: 12px;
+}
+
+
+
+.sidebar {
+  border-right-color: rgba(15, 23, 42, 0.08);
+  box-shadow: 18px 0 44px rgba(15, 23, 42, 0.05);
+}
+
+
+
+.brandTitle {
+  font-size: 15px;
+}
+
+
+
+.nav a {
+  border-radius: 12px;
+}
+
+
+
+.nav a:hover,
+.nav a.active {
+  background: color-mix(in srgb, var(--accent) 9%, var(--surface));
+}
+
+
+
+.figmaGeneratorDashboard {
+  gap: 22px;
+}
+
+
+
+.figmaGeneratorPanel {
+  border: 1px solid rgba(15, 23, 42, 0.09);
+  box-shadow: 0 18px 48px rgba(15, 23, 42, 0.06);
+}
+
+
+
+.figmaGeneratorMode {
+  border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+
+
+.segmentedControl {
+  border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+
+
+.segmentedButton:focus-visible,
+.figmaButton:focus-visible,
+.btn:focus-visible,
+.smallBtn:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--accent) 28%, transparent);
+  outline-offset: 2px;
+}
+
+
+
+.figmaYamlDropzone {
+  border-radius: 16px;
+}
+
+
+
+.figmaHistoryCard {
+  transition: border-color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
+}
+
+
+
+.figmaHistoryCard:hover {
+  border-color: color-mix(in srgb, var(--accent) 28%, var(--line));
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.07);
+  transform: translateY(-1px);
+}
+
+
+
+.tableWrap {
+  overflow-x: auto;
+}
+
+
+
+@media (max-width: 1100px) {
+  .figmaHero,
+  .figmaGeneratorDashboard {
+    grid-template-columns: 1fr;
+  }
+
+  .figmaProductVisual {
+    max-width: 760px;
+  }
+}
+
+
+
+@media (max-width: 760px) {
+  html,
+  body,
+  #root {
+    overflow-x: hidden;
+  }
+
+  .figmaPublicHeaderInner {
+    width: min(100vw - 28px, 100%);
+    min-height: auto;
+    padding-block: 10px;
+  }
+
+  .figmaBrand {
+    flex: 1 1 auto;
+  }
+
+  .figmaHeaderActions {
+    flex: 0 0 auto;
+  }
+
+  .figmaHeaderActions .smallBtn {
+    padding-inline: 10px;
+  }
+
+  .figmaPublicNav {
+    order: 3;
+    width: 100%;
+    justify-content: flex-start;
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+
+  .figmaHero {
+    width: min(100vw - 32px, 100%);
+    padding: 46px 0 34px;
+    gap: 28px;
+  }
+
+  .figmaHeroCopy h1 {
+    font-size: clamp(32px, 11vw, 44px);
+  }
+
+  .figmaActions {
+    width: 100%;
+  }
+
+  .figmaActions .figmaButton,
+  .figmaActions .btn {
+    min-height: 44px;
+  }
+
+  .figmaProductVisual {
+    padding: 13px;
+    border-radius: 16px;
+  }
+
+  .figmaVisualHeader {
+    flex-direction: column;
+  }
+
+  .figmaPipeline,
+  .figmaHero .figmaVisualBottom {
+    grid-template-columns: 1fr;
+  }
+
+  .figmaPipelineArrow {
+    transform: rotate(90deg);
+    line-height: 1;
+  }
+
+  .figmaSection,
+  .figmaDocsHero {
+    width: min(100vw - 32px, 100%);
+    padding: 38px 0;
+  }
+
+  .figmaTwoCards,
+  .figmaStepper,
+  .figmaFeatureGrid,
+  .figmaTrustGrid,
+  .figmaExamplesGrid,
+  .figmaDocsShell {
+    grid-template-columns: 1fr;
+  }
+
+  .figmaDocsSidebar {
+    position: static;
+    max-height: none;
+  }
+
+  .figmaGeneratorPanel,
+  .figmaGeneratorCallout,
+  .figmaYamlDropzone,
+  .figmaGeneratorMode {
+    padding: 16px;
+  }
+
+  .segmentedControl {
+    grid-template-columns: 1fr;
+  }
+
+  .header {
+    padding: 16px;
+  }
+
+  .main {
+    padding: 16px;
+  }
+
+  .authSoloCard {
+    padding: 18px;
+  }
+}
+
+
+
+/* Application interface compatibility styles. */
+
+
+:root[data-theme="dark"] {
+  --page: #0b101a;
+  --surface: #111827;
+  --surface-soft: #0f172a;
+  --surface-strong: #1d293d;
+  --ink: #f8fafc;
+  --muted: #9fb0c7;
+  --line: #263244;
+  --line-strong: #334155;
+  --accent-soft: #172554;
+  --good-soft: #062c1b;
+  --gold-soft: #332508;
+}
+
+
+
+.figmaBrandLogo,
+.brandLogo--default,
+.brandLogo--landing {
+  border-radius: 8px;
+  background: #2563eb;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+}
+
+
+
+.figmaBrandLogo .brandLogoImage,
+.brandLogo--default .brandLogoImage,
+.brandLogo--landing .brandLogoImage {
+  padding: 5px;
+  filter: brightness(0) invert(1);
+}
+
+
+
+.brandLogo--login,
+.brandLogo--auth,
+.brandLogo--app,
+.brandLogo--sidebar {
+  border-radius: 9px;
+}
+
+
+
+.figmaLanding .figmaHero {
+  grid-template-columns: 1fr;
+  align-items: start;
+  gap: 42px;
+  padding-top: 84px;
+}
+
+
+
+.figmaLanding .figmaHeroCopy {
+  max-width: 680px;
+}
+
+
+
+.figmaLanding .figmaHeroCopy h1 {
+  font-size: clamp(44px, 5vw, 64px);
+}
+
+
+
+.figmaLanding .figmaProductVisual {
+  width: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+
+
+.figmaLanding .figmaVisualHeader,
+.figmaLanding .figmaVisualBottom {
+  display: none;
+}
+
+
+
+.figmaLanding .figmaPipeline {
+  grid-template-columns: minmax(220px, 0.95fr) minmax(70px, 0.18fr) minmax(220px, 0.95fr) minmax(70px, 0.18fr) minmax(220px, 0.95fr);
+  gap: clamp(18px, 4vw, 72px);
+  margin: 0;
+  align-items: center;
+}
+
+
+
+.figmaLanding .figmaPipelineCard {
+  min-height: 182px;
+  padding: 18px;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: none;
+}
+
+
+
+.figmaLanding .figmaPipelinePivot {
+  background: #ffffff;
+}
+
+
+
+.figmaLanding .figmaInputChoice {
+  background: #f8fafc;
+}
+
+
+
+.figmaLanding .figmaInputChoiceYaml {
+  background: #f5f3ff;
+}
+
+
+
+.figmaLanding .figmaPipelineArrow {
+  color: #64748b;
+  font-size: 24px;
+}
+
+
+
+.figmaProofPills span:nth-child(n+4),
+.figmaMiniTags span:nth-child(n+4),
+.figmaExampleTags span:nth-child(n+5) {
+  display: none;
+}
+
+
+
+.figmaDocsPage {
+  min-height: calc(100vh - 58px);
+}
+
+
+
+.figmaDocsPage .figmaDocsShell {
+  width: min(1280px, calc(100vw - 32px));
+  grid-template-columns: 240px minmax(0, 1fr);
+  gap: 40px;
+  align-items: start;
+  padding: 0;
+}
+
+
+
+.figmaDocsIntro {
+  display: grid;
+  gap: 18px;
+  margin-bottom: 22px;
+}
+
+
+
+.figmaDocsIntro h1 {
+  max-width: 760px;
+  margin: 0;
+  color: var(--figma-text);
+  font-size: clamp(32px, 3.2vw, 44px);
+  line-height: 1.08;
+  letter-spacing: -0.04em;
+}
+
+
+
+.figmaDocsIntro p {
+  max-width: 960px;
+  margin: 0;
+  color: var(--figma-muted);
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+
+
+.figmaDocsPage .figmaDocsSidebar {
+  top: 76px;
+  padding: 18px 0;
+  border-radius: 0;
+  border-top: 0;
+  border-bottom: 0;
+  border-left: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+
+
+.figmaDocsPage .figmaDocsSidebar strong {
+  padding-inline: 16px;
+}
+
+
+
+.figmaDocsPage .figmaDocsSidebar a {
+  min-height: 38px;
+  padding-inline: 16px;
+  border-radius: 0;
+}
+
+
+
+.figmaDocsPage .figmaDocsSidebar a:hover {
+  background: #eef4ff;
+}
+
+
+
+.figmaDocsPage .figmaDocCard {
+  padding: 22px;
+  border-radius: 10px;
+  box-shadow: none;
+}
+
+
+
+.figmaDocsPage .visualIconCard {
+  width: 30px;
+  height: 30px;
+}
+
+
+
+.app {
+  background:
+    linear-gradient(90deg, rgba(49, 92, 246, 0.035) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(49, 92, 246, 0.035) 1px, transparent 1px),
+    var(--page);
+  background-size: 28px 28px;
+}
+
+
+
+:root[data-theme="dark"] .app {
+  background: #0b101a;
+}
+
+
+
+:root[data-theme="dark"] .sidebar,
+:root[data-theme="dark"] .header {
+  background: #111827;
+  border-color: #263244;
+}
+
+
+
+:root[data-theme="dark"] .figmaGeneratorPanel,
+:root[data-theme="dark"] .figmaGeneratorMode,
+:root[data-theme="dark"] .figmaGeneratorCallout,
+:root[data-theme="dark"] .figmaYamlDropzone,
+:root[data-theme="dark"] .figmaHistoryCard {
+  background: #111827;
+  border-color: #263244;
+}
+
+
+
+:root[data-theme="dark"] .figmaGeneratorPanelForm,
+:root[data-theme="dark"] .figmaGeneratorPanelRuntime {
+  border-top-color: #315cf6;
+}
+
+
+
+.main {
+  max-width: 1500px;
+  margin-inline: auto;
+}
+
+
+
+.header {
+  border-radius: 18px;
+}
+
+
+
+.figmaGeneratorDashboard {
+  align-items: start;
+}
+
+
+
+.figmaGeneratorPanel {
+  padding: 22px;
+}
+
+
+
+.figmaGeneratorPanel .panelHeader {
+  margin-bottom: 18px;
+}
+
+
+
+.figmaGeneratorPanel .grid {
+  gap: 14px;
+}
+
+
+
+.figmaGeneratorPanel .field {
+  gap: 7px;
+}
+
+
+
+.figmaGeneratorPanel input,
+.figmaGeneratorPanel select,
+.figmaGeneratorPanel textarea {
+  min-height: 44px;
+}
+
+
+
+.logsPanel.figmaTerminal {
+  background: #0b1020;
+  border-color: #202b3f;
+}
+
+
+
+@media (max-width: 980px) {
+  .figmaLanding .figmaPipeline {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .figmaLanding .figmaPipelineArrow {
+    transform: rotate(90deg);
+  }
+
+  .figmaDocsPage .figmaDocsShell {
+    grid-template-columns: 1fr;
+  }
+
+  .figmaDocsPage .figmaDocsSidebar {
+    position: static;
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding: 12px;
+    border: 1px solid var(--figma-border);
+    border-radius: 14px;
+    background: #ffffff;
+  }
+
+  .figmaDocsPage .figmaDocsSidebar strong {
+    display: none;
+  }
+
+  .figmaDocsPage .figmaDocsSidebar a {
+    flex: 0 0 auto;
+    border-radius: 10px;
+  }
+}
+
+
+
+@media (max-width: 680px) {
+  .figmaLanding .figmaHeroCopy h1 {
+    font-size: clamp(34px, 11vw, 46px);
+  }
+
+  .figmaLanding .figmaPipelineCard {
+    min-height: auto;
+  }
+
+  .figmaBrandLogo {
+    width: 30px;
+    height: 30px;
+  }
+
+  .figmaBrand strong {
+    font-size: 15px;
+  }
+
+  .figmaPublicNav a {
+    white-space: nowrap;
+  }
+
+  .figmaDocsIntro h1 {
+    font-size: 32px;
+  }
+}
+
+
+
+/* Targeted visual fixes from the latest screenshots. */
+
+
+@media (min-width: 980px) {
+  .app,
+  .app.app--sidebar-collapsed {
+    display: block;
+  }
+
+  .sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    height: 100vh;
+    min-height: 100vh;
+  }
+
+  .main {
+    margin-left: 284px;
+  }
+
+  .main.main--sidebar-collapsed {
+    margin-left: 84px;
+  }
+}
+
+
+
+.btn.primary,
+.primaryBtn,
+.figmaButtonPrimary {
+  border-color: #2563eb;
+  background: #2563eb;
+  color: #ffffff;
+  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.16);
+}
+
+
+
+.btn.primary:hover:not(:disabled),
+.primaryBtn:hover:not(:disabled),
+.figmaButtonPrimary:hover {
+  border-color: #1d4ed8;
+  background: #1d4ed8;
+  box-shadow: 0 12px 24px rgba(37, 99, 235, 0.2);
+}
+
+
+
+.btn:not(.primary),
+.figmaButton:not(.figmaButtonPrimary),
+.smallBtn:not(.primary) {
+  background: #ffffff;
+  color: #0f172a;
+}
+
+
+
+:root[data-theme="dark"] .btn:not(.primary),
+:root[data-theme="dark"] .figmaButton:not(.figmaButtonPrimary),
+:root[data-theme="dark"] .smallBtn:not(.primary) {
+  border-color: #2b384f;
+  background: #111827;
+  color: #dbeafe;
+}
+
+
+
+.figmaLanding .figmaProofPills,
+.figmaLanding .figmaTwoCards .figmaBadge,
+.figmaLanding .figmaMiniTags {
+  display: none;
+}
+
+
+
+.figmaLanding .figmaSection {
+  position: relative;
+  isolation: isolate;
+}
+
+
+
+.figmaLanding .figmaSection:nth-of-type(odd) {
+  background: #f8fafc;
+  box-shadow: 0 0 0 100vmax #f8fafc;
+  clip-path: inset(0 -100vmax);
+}
+
+
+
+.figmaLanding .figmaSection:nth-of-type(even) {
+  background: #ffffff;
+  box-shadow: 0 0 0 100vmax #ffffff;
+  clip-path: inset(0 -100vmax);
+}
+
+
+
+.figmaLanding .figmaTwoCards .figmaCard {
+  padding-top: 26px;
+}
+
+
+
+.figmaLanding .figmaTwoCards .visualIconCard {
+  margin-bottom: 12px;
+}
+
+
+
+:root[data-theme="dark"] .sidebar {
+  background: #111827;
+  box-shadow: none;
+}
+
+
+
+/* App example alignment: fixed full-height sidebar, no collapse rail. */
+
+
+@media (min-width: 980px) {
+  .sidebar {
+    width: 220px;
+    padding: 12px 8px;
+    gap: 20px;
+    border-right: 1px solid #263244;
+    background: #111827;
+    box-shadow: none;
+    transition: none;
+  }
+
+  .main,
+  .main.main--sidebar-collapsed {
+    margin-left: 220px;
+    max-width: none;
+    min-height: 100vh;
+    padding: 0;
+    background: #0b101a;
+  }
+
+  .header {
+    min-height: 56px;
+    margin: 0;
+    padding: 0 24px;
+    align-items: center;
+    border: 0;
+    border-bottom: 1px solid #263244;
+    border-radius: 0;
+    background: #111827;
+    box-shadow: none;
+  }
+
+  .header .hgroup p,
+  .header .burger {
+    display: none;
+  }
+
+  .header h1 {
+    color: #f8fafc;
+    font-size: 16px;
+    letter-spacing: -0.02em;
+  }
+
+  .topbar {
+    gap: 8px;
+  }
+
+  .brand {
+    min-height: 44px;
+    padding: 0 8px;
+  }
+
+  .brandTitle {
+    color: #ffffff;
+    font-size: 16px;
+  }
+
+  .brandSubtitle {
+    display: none;
+  }
+
+  .brandLogo--app {
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    background: #2563eb;
+  }
+
+  .brandLogo--app .brandLogoImage {
+    padding: 5px;
+    filter: brightness(0) invert(1);
+  }
+
+  .nav {
+    gap: 4px;
+  }
+
+  .nav a {
+    min-height: 38px;
+    padding: 8px 10px;
+    border-radius: 7px;
+    color: #9fb0c7;
+    font-weight: 560;
+  }
+
+  .nav a:hover,
+  .nav a.active {
+    color: #3b82f6;
+    border-color: transparent;
+    background: #172554;
+  }
+
+  .sidebarFooter {
+    margin: auto -8px 0;
+    padding: 14px 16px;
+    border-top: 1px solid #263244;
+  }
+
+  .sidebarFooter .btn {
+    width: 100%;
+    justify-content: flex-start;
+    min-height: 38px;
+    border-color: transparent;
+    background: transparent;
+    color: #dbeafe;
+    box-shadow: none;
+  }
+
+  .sidebarFooter .btn:hover {
+    background: #172554;
+  }
+
+  .main > .betaLine,
+  .main > div[style] {
+    display: none;
+  }
+
+  .figmaGeneratorDashboard {
+    width: min(960px, calc(100vw - 300px));
+    margin: 28px auto 0;
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .figmaGeneratorPanel {
+    padding: 24px;
+    border-color: #263244;
+    border-radius: 10px;
+    background: #111827;
+    box-shadow: none;
+  }
+
+  .figmaGeneratorPanelForm,
+  .figmaGeneratorPanelRuntime {
+    border-top: 1px solid #263244;
+  }
+
+  .figmaGeneratorMode,
+  .figmaGeneratorCallout,
+  .figmaYamlDropzone {
+    border-color: #263244;
+    background: #111827;
+  }
+
+  .figmaGeneratorPanel .panelTitle,
+  .figmaGeneratorPanel h2,
+  .figmaGeneratorPanel h3 {
+    color: #f8fafc;
+  }
+
+  .figmaGeneratorPanel .panelText,
+  .figmaGeneratorPanel label,
+  .figmaGeneratorPanel .field span {
+    color: #93b4dd;
+  }
+
+  .figmaGeneratorPanel input,
+  .figmaGeneratorPanel select,
+  .figmaGeneratorPanel textarea {
+    border-color: #263244;
+    background: #0b101a;
+    color: #f8fafc;
+  }
+
+  .segmentedControl {
+    width: auto;
+    min-width: 308px;
+    border-color: #263244;
+    background: #1d293d;
+  }
+
+  .segmentedButton.active {
+    background: #0b101a;
+    color: #ffffff;
+  }
+
+  .figmaGeneratorPanel .btn.primary,
+  .figmaGeneratorPanel .primaryBtn {
+    min-height: 44px;
+    background: #2563eb;
+  }
+}
+
+
+
+@media (max-width: 979px) {
+  .sidebarCollapseAction {
+    display: none;
+  }
+}
+
+
+
+/* App layout tightening after screenshot review. */
+
+
+@media (min-width: 980px) {
+  .main > .grid,
+  .main > .card,
+  .main > .docSection,
+  .main > .figmaGeneratorDashboard {
+    width: min(1280px, calc(100vw - 280px));
+    margin-inline: auto;
+  }
+
+  .main > .grid.cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .card {
+    padding: 16px;
+    border-radius: 12px;
+    box-shadow: none;
+  }
+
+  .kpi {
+    min-height: 112px;
+  }
+
+  .kpi .value,
+  .value {
+    font-size: 30px;
+    line-height: 1.05;
+  }
+
+  .panelHeader {
+    margin-bottom: 12px;
+  }
+
+  .panelTitle {
+    font-size: 15px;
+  }
+
+  .panelText {
+    font-size: 12px;
+  }
+
+  .docLandingCard {
+    padding: 16px;
+  }
+
+  .docGuideGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .docGuideCard,
+  .docBlock,
+  .docStep,
+  .docErrorCard {
+    padding: 14px;
+    border-radius: 10px;
+  }
+
+  .docTechGrid {
+    gap: 8px;
+  }
+
+  .techBadge {
+    min-height: 36px;
+    padding: 6px 10px;
+    border-radius: 8px;
+  }
+
+  .docSection .card {
+    padding: 16px;
+  }
+
+  .docSectionGrid {
+    gap: 14px;
+  }
+
+  .docSubsection {
+    margin-top: 14px;
+  }
+
+  .figmaGeneratorDashboard {
+    display: grid;
+    grid-template-columns: minmax(420px, 0.92fr) minmax(460px, 1.08fr);
+    grid-template-areas:
+      "config visual"
+      "history history";
+    width: min(1280px, calc(100vw - 280px));
+    gap: 18px;
+    margin-top: 24px;
+  }
+
+  .figmaGeneratorPanelForm {
+    grid-area: config;
+  }
+
+  .figmaGeneratorPanelRuntime {
+    grid-area: visual;
+  }
+
+  .figmaGeneratorPanelHistory {
+    grid-area: history;
+  }
+
+  .figmaGeneratorPanel {
+    padding: 18px;
+  }
+
+  .figmaGeneratorMode,
+  .figmaGeneratorCallout,
+  .figmaYamlDropzone {
+    padding: 14px;
+  }
+
+  .figmaGeneratorPanel .grid {
+    gap: 12px;
+  }
+
+  .figmaGeneratorPanel .hr {
+    margin: 14px 0;
+  }
+
+  .onboardingPresetGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .onboardingPresetCard {
+    padding: 12px;
+    min-height: auto;
+  }
+
+  .figmaGeneratorPanelHistory > .grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .figmaHistoryCard {
+    padding: 14px !important;
+    border-radius: 10px;
+  }
+}
+
+
+
+@media (max-width: 1240px) and (min-width: 980px) {
+  .figmaGeneratorDashboard {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "config"
+      "visual"
+      "history";
+  }
+
+  .figmaGeneratorPanelHistory > .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+
+/* App content width/padding correction: use the available workspace instead of narrow centered columns. */
+
+
+@media (min-width: 980px) {
+  .main {
+    padding: 0 24px 32px;
+  }
+
+  .header {
+    margin-inline: -24px;
+    padding-inline: 24px;
+  }
+
+  .main > .grid,
+  .main > .card,
+  .main > .docSection,
+  .main > div > .docSection,
+  .main > .figmaGeneratorDashboard {
+    width: 100%;
+    max-width: 1680px;
+    margin-inline: auto;
+  }
+
+  .main > .grid.cols-2 {
+    gap: 18px;
+  }
+
+  .card {
+    padding: 22px;
+  }
+
+  .kpi {
+    min-height: 128px;
+  }
+
+  .docLandingCard {
+    padding: 22px;
+  }
+
+  .docGuideGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+  }
+
+  .docGuideCard {
+    min-height: 118px;
+    padding: 24px;
+  }
+
+  .docSection {
+    display: block;
+  }
+
+  .docSection > .card {
+    padding: 24px;
+  }
+
+  .docSectionGrid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 18px;
+  }
+
+  .docBlock,
+  .docStep,
+  .docErrorCard {
+    padding: 18px;
+  }
+
+  .docTechGrid {
+    gap: 12px;
+  }
+
+  .techBadge {
+    padding: 8px 14px;
+  }
+
+  .figmaGeneratorDashboard {
+    max-width: 1680px;
+    width: 100%;
+    grid-template-columns: minmax(460px, 0.95fr) minmax(520px, 1.05fr);
+    gap: 22px;
+  }
+
+  .figmaGeneratorPanel {
+    padding: 24px;
+  }
+
+  .figmaGeneratorMode,
+  .figmaGeneratorCallout,
+  .figmaYamlDropzone {
+    padding: 18px;
+  }
+
+  .figmaGeneratorPanelHistory > .grid {
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  }
+}
+
+
+
+@media (max-width: 979px) {
+  .main {
+    padding: 16px;
+  }
+
+  .docGuideGrid,
+  .docSectionGrid,
+  .figmaGeneratorDashboard {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+
+/* Final interaction/topbar spacing fixes. */
+
+
+.btn:active:not(:disabled),
+.smallBtn:active:not(:disabled),
+.primaryBtn:active:not(:disabled),
+.figmaButton:active,
+.googleBtn:active:not(:disabled),
+.segmentedButton:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+
+
+.btn.primary:active:not(:disabled),
+.primaryBtn:active:not(:disabled),
+.figmaButtonPrimary:active {
+  border-color: #1d4ed8;
+  background: #1d4ed8;
+  color: #ffffff;
+}
+
+
+
+.btn:not(.primary):active:not(:disabled),
+.smallBtn:not(.primary):active:not(:disabled),
+.figmaButton:not(.figmaButtonPrimary):active,
+.segmentedButton:active:not(:disabled) {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+
+
+:root[data-theme="dark"] .btn:not(.primary):active:not(:disabled),
+:root[data-theme="dark"] .smallBtn:not(.primary):active:not(:disabled),
+:root[data-theme="dark"] .figmaButton:not(.figmaButtonPrimary):active,
+:root[data-theme="dark"] .segmentedButton:active:not(:disabled) {
+  border-color: #334155;
+  background: #111827;
+  color: #dbeafe;
+}
+
+
+
+:root[data-theme="dark"] .btn.primary:active:not(:disabled),
+:root[data-theme="dark"] .primaryBtn:active:not(:disabled),
+:root[data-theme="dark"] .figmaButtonPrimary:active {
+  border-color: #1d4ed8;
+  background: #1d4ed8;
+  color: #ffffff;
+}
+
+
+
+.topbar .themeToggle,
+.topbar .languageToggle,
+.figmaHeaderActions .themeToggle,
+.figmaHeaderActions .languageToggle {
+  min-height: 38px;
+  border-radius: 10px;
+  transition: border-color 0.16s ease, background-color 0.16s ease, color 0.16s ease;
+}
+
+
+
+:root[data-theme="dark"] .topbar .themeToggle,
+:root[data-theme="dark"] .topbar .languageToggle,
+:root[data-theme="dark"] .figmaHeaderActions .themeToggle,
+:root[data-theme="dark"] .figmaHeaderActions .languageToggle {
+  border-color: #263244;
+  background: #111827;
+  color: #dbeafe;
+  box-shadow: none;
+}
+
+
+
+:root[data-theme="dark"] .topbar .themeToggle:hover,
+:root[data-theme="dark"] .topbar .languageToggle:hover,
+:root[data-theme="dark"] .figmaHeaderActions .themeToggle:hover,
+:root[data-theme="dark"] .figmaHeaderActions .languageToggle:hover {
+  border-color: #334155;
+  background: #172033;
+  box-shadow: none;
+}
+
+
+
+:root[data-theme="dark"] .themeToggleTrack {
+  background: #1d293d;
+}
+
+
+
+:root[data-theme="dark"] .themeToggleThumb {
+  background: #2563eb;
+}
+
+
+
+:root[data-theme="dark"] .languageToggle span:first-child,
+:root[data-theme="dark"] .languageToggle span:last-child {
+  border-color: #263244;
+  background: #172033;
+}
+
+
+
+@media (min-width: 980px) {
+  .main > .grid:first-of-type,
+  .main > .card:first-of-type,
+  .main > .figmaGeneratorDashboard,
+  .main > div:first-of-type > .docSection {
+    margin-top: 28px;
+  }
+
+  .main > .grid + .grid,
+  .main > .card + .grid,
+  .main > .grid + .card,
+  .main > .card + .card,
+  .main > div + div > .docSection {
+    margin-top: 18px;
+  }
+}
+
+
+
+/* Visual parity fixes: keep Figma-like public/auth styling without breaking app light mode. */
+
+
+.authPageSolo {
+  background:
+    radial-gradient(circle at 18% 12%, rgba(37, 99, 235, 0.24), transparent 28%),
+    radial-gradient(circle at 82% 8%, rgba(124, 58, 237, 0.18), transparent 24%),
+    linear-gradient(135deg, #080e1a 0%, #0f172a 52%, #111827 100%) !important;
+  color: #f8fafc;
+}
+
+
+
+.authSoloCard {
+  border-color: rgba(148, 163, 184, 0.2) !important;
+  background: rgba(15, 23, 42, 0.94) !important;
+  color: #f8fafc;
+  box-shadow: 0 28px 80px rgba(2, 6, 23, 0.46) !important;
+}
+
+
+
+.authSoloTop {
+  border-color: rgba(148, 163, 184, 0.18) !important;
+}
+
+
+
+.authSoloName,
+.authSoloTitle {
+  color: #f8fafc !important;
+}
+
+
+
+.authSoloTag,
+.authSoloSub,
+.authPageSolo .betaLine {
+  color: #94a3b8 !important;
+}
+
+
+
+.authPageSolo .field span {
+  color: #cbd5e1;
+}
+
+
+
+.authPageSolo .field input {
+  border-color: #263244 !important;
+  background: #0b1220 !important;
+  color: #f8fafc !important;
+  box-shadow: none !important;
+}
+
+
+
+.authPageSolo .field input::placeholder {
+  color: #64748b;
+}
+
+
+
+.authPageSolo .field input:focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2) !important;
+}
+
+
+
+.authPageSolo .googleBtn,
+.authPageSolo .btn:not(.primary) {
+  border-color: #263244 !important;
+  background: #111827 !important;
+  color: #e5e7eb !important;
+}
+
+
+
+.authPageSolo .googleBtn:hover,
+.authPageSolo .btn:not(.primary):hover {
+  border-color: #334155 !important;
+  background: #172033 !important;
+  color: #f8fafc !important;
+  transform: none !important;
+}
+
+
+
+.authPageSolo .primaryBtn,
+.authPageSolo .btn.primary {
+  border-color: #2563eb !important;
+  background: #2563eb !important;
+  color: #ffffff !important;
+}
+
+
+
+.authPageSolo .primaryBtn:hover,
+.authPageSolo .btn.primary:hover {
+  border-color: #1d4ed8 !important;
+  background: #1d4ed8 !important;
+  transform: none !important;
+}
+
+
+
+.authPageSolo .sep span {
+  background: #263244;
+}
+
+
+
+.authPageSolo .sep div,
+.authPageSolo .muted,
+.authPageSolo .linkBtn {
+  color: #94a3b8;
+}
+
+
+
+.authPageSolo .languageToggle {
+  border-color: #263244;
+  background: #111827;
+  color: #dbeafe;
+}
+
+
+
+.authPageSolo .languageToggle span:first-child,
+.authPageSolo .languageToggle span:last-child {
+  border-color: #263244;
+  background: #172033;
+}
+
+
+
+:root:not([data-theme="dark"]) .app {
+  background: #f6f8fb;
+  color: #0f172a;
+}
+
+
+
+@media (min-width: 980px) {
+  :root:not([data-theme="dark"]) .sidebar,
+  :root:not([data-theme="dark"]) .header {
+    border-color: #e2e8f0;
+    background: #ffffff;
+    color: #0f172a;
+    box-shadow: none;
+  }
+
+  :root:not([data-theme="dark"]) .main,
+  :root:not([data-theme="dark"]) .main.main--sidebar-collapsed {
+    background: #f6f8fb;
+  }
+
+  :root:not([data-theme="dark"]) .brandTitle,
+  :root:not([data-theme="dark"]) .header h1 {
+    color: #0f172a;
+  }
+
+  :root:not([data-theme="dark"]) .brandSubtitle,
+  :root:not([data-theme="dark"]) .header .hgroup p,
+  :root:not([data-theme="dark"]) .header .burger {
+    color: #64748b;
+  }
+
+  :root:not([data-theme="dark"]) .nav a {
+    color: #475569;
+  }
+
+  :root:not([data-theme="dark"]) .nav a:hover,
+  :root:not([data-theme="dark"]) .nav a.active {
+    border-color: #dbeafe;
+    background: #eff6ff;
+    color: #1d4ed8;
+  }
+
+  :root:not([data-theme="dark"]) .sidebarFooter {
+    border-top-color: #e2e8f0;
+    background: #ffffff;
+  }
+
+  :root:not([data-theme="dark"]) .sidebarFooter .btn,
+  :root:not([data-theme="dark"]) .topbar .themeToggle,
+  :root:not([data-theme="dark"]) .topbar .languageToggle {
+    border-color: #e2e8f0;
+    background: #ffffff;
+    color: #0f172a;
+    box-shadow: none;
+  }
+}
+
+
+
+:root:not([data-theme="dark"]) .card,
+:root:not([data-theme="dark"]) .docLandingCard,
+:root:not([data-theme="dark"]) .docGuideCard,
+:root:not([data-theme="dark"]) .docBlock,
+:root:not([data-theme="dark"]) .docStep,
+:root:not([data-theme="dark"]) .docErrorCard,
+:root:not([data-theme="dark"]) .figmaGeneratorPanel,
+:root:not([data-theme="dark"]) .figmaGeneratorMode,
+:root:not([data-theme="dark"]) .figmaGeneratorCallout,
+:root:not([data-theme="dark"]) .figmaYamlDropzone,
+:root:not([data-theme="dark"]) .figmaHistoryCard {
+  border-color: #e2e8f0;
+  background: #ffffff;
+  color: #0f172a;
+}
+
+
+
+:root:not([data-theme="dark"]) .figmaGeneratorPanel input,
+:root:not([data-theme="dark"]) .figmaGeneratorPanel select,
+:root:not([data-theme="dark"]) .figmaGeneratorPanel textarea,
+:root:not([data-theme="dark"]) .card input,
+:root:not([data-theme="dark"]) .card select,
+:root:not([data-theme="dark"]) .card textarea {
+  border-color: #cbd5e1;
+  background: #ffffff;
+  color: #0f172a;
+}
+
+
+
+:root:not([data-theme="dark"]) .table th {
+  background: #f1f5f9;
+  color: #334155;
+}
+
+
+
+.btn:hover:not(:disabled),
+.smallBtn:hover:not(:disabled),
+.primaryBtn:hover:not(:disabled),
+.figmaButton:hover,
+.googleBtn:hover:not(:disabled),
+.segmentedButton:hover:not(:disabled) {
+  transform: none;
+}
+
+
+
+.btn:not(.primary):hover:not(:disabled),
+.smallBtn:not(.primary):hover:not(:disabled),
+.figmaButton:not(.figmaButtonPrimary):hover,
+.segmentedButton:hover:not(:disabled) {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+  color: #0f172a;
+  box-shadow: none;
+}
+
+
+
+.btn.primary:hover:not(:disabled),
+.primaryBtn:hover:not(:disabled),
+.figmaButtonPrimary:hover {
+  border-color: #1d4ed8;
+  background: #1d4ed8;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+
+
+:root[data-theme="dark"] .btn:not(.primary):hover:not(:disabled),
+:root[data-theme="dark"] .smallBtn:not(.primary):hover:not(:disabled),
+:root[data-theme="dark"] .figmaButton:not(.figmaButtonPrimary):hover,
+:root[data-theme="dark"] .segmentedButton:hover:not(:disabled) {
+  border-color: #334155;
+  background: #172033;
+  color: #dbeafe;
+  box-shadow: none;
+}
+
+
+
+:root[data-theme="dark"] .btn.primary:hover:not(:disabled),
+:root[data-theme="dark"] .primaryBtn:hover:not(:disabled),
+:root[data-theme="dark"] .figmaButtonPrimary:hover {
+  border-color: #1d4ed8;
+  background: #1d4ed8;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+
+
+.btn:focus-visible,
+.smallBtn:focus-visible,
+.primaryBtn:focus-visible,
+.figmaButton:focus-visible,
+.googleBtn:focus-visible,
+.segmentedButton:focus-visible,
+.figmaLoginLink:focus-visible {
+  outline: 3px solid rgba(37, 99, 235, 0.24);
+  outline-offset: 2px;
+}
+
+
+
+.figmaPublicHeader {
+  border-bottom: 1px solid rgba(226, 232, 240, 0.92);
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(18px);
+}
+
+
+
+.figmaPublicHeaderInner {
+  min-height: 64px;
+  gap: 20px;
+}
+
+
+
+.figmaBrand {
+  gap: 10px;
+}
+
+
+
+.figmaBrandLogo {
+  width: 30px !important;
+  height: 30px !important;
+}
+
+
+
+.figmaBrand small {
+  display: none;
+}
+
+
+
+.figmaPublicNav {
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid #e2e8f0;
+  border-radius: 999px;
+  background: #f8fafc;
+}
+
+
+
+.figmaPublicNav a {
+  min-height: 34px;
+  padding: 0 13px;
+  border-radius: 999px;
+  color: #475569;
+}
+
+
+
+.figmaPublicNav a:hover,
+.figmaPublicNav a.active {
+  background: #ffffff;
+  color: #1d4ed8;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+}
+
+
+
+.figmaHeaderActions {
+  gap: 8px;
+}
+
+
+
+.figmaHeaderActions .smallBtn,
+.figmaHeaderActions .figmaLoginLink {
+  min-height: 36px;
+  border-radius: 10px;
+  padding: 0 14px;
+}
+
+
+
+.figmaHeaderActions .languageToggle {
+  min-height: 36px;
+  padding: 4px;
+  gap: 4px;
+}
+
+
+
+.figmaHeaderActions .languageToggle span:first-child,
+.figmaHeaderActions .languageToggle span:last-child {
+  min-width: 30px;
+  padding: 4px 7px;
+}
+
+
+
+@media (min-width: 980px) {
+  .main > .grid:first-of-type,
+  .main > .card:first-of-type,
+  .main > .figmaGeneratorDashboard,
+  .main > div:first-of-type > .docSection {
+    margin-top: 40px;
+  }
+}
+
+
+
+@media (max-width: 979px) {
+  .figmaPublicHeaderInner {
+    padding-block: 10px;
+    gap: 10px;
+  }
+
+  .figmaPublicNav {
+    order: 3;
+    width: 100%;
+    overflow-x: auto;
+    justify-content: flex-start;
+  }
+
+  .figmaHeaderActions {
+    margin-left: auto;
+  }
+
+  .main > .grid:first-of-type,
+  .main > .card:first-of-type,
+  .main > .figmaGeneratorDashboard,
+  .main > div:first-of-type > .docSection {
+    margin-top: 20px;
+  }
+}
+
+
+
+
+
+/* Navbar/theme parity pass: Figma public nav + theme-aware login. */
+
+
+.figmaPublicHeader {
+  border-bottom: 1px solid #e5e7eb !important;
+  background: rgba(255, 255, 255, 0.96) !important;
+  backdrop-filter: blur(14px);
+}
+
+
+
+.figmaPublicHeaderInner {
+  min-height: 56px !important;
+  width: min(1236px, calc(100vw - 48px));
+}
+
+
+
+.figmaBrandLogo {
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 7px;
+}
+
+
+
+.figmaBrand strong {
+  color: var(--figma-text);
+  font-size: 16px;
+  font-weight: 720;
+}
+
+
+
+.figmaBrand small {
+  display: none !important;
+}
+
+
+
+.figmaPublicNav {
+  gap: 8px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+}
+
+
+
+.figmaPublicNav a {
+  min-height: 34px !important;
+  padding: 0 12px !important;
+  border-radius: 8px !important;
+  color: #475569 !important;
+  font-size: 14px !important;
+  font-weight: 520 !important;
+  box-shadow: none !important;
+}
+
+
+
+.figmaPublicNav a:hover,
+.figmaPublicNav a.active {
+  background: #eff6ff !important;
+  color: #2563eb !important;
+  box-shadow: none !important;
+}
+
+
+
+.figmaHeaderActions {
+  gap: 8px !important;
+}
+
+
+
+.figmaLanguageButton,
+.figmaThemeButton,
+.figmaLoginLink {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #0f172a;
+  font-size: 13px;
+  font-weight: 560;
+  line-height: 1;
+  box-shadow: none;
+}
+
+
+
+.figmaLanguageButton,
+.figmaThemeButton {
+  padding: 0 10px;
+}
+
+
+
+.figmaThemeButton {
+  width: 36px;
+  padding: 0;
+  cursor: pointer;
+}
+
+
+
+.figmaLoginLink {
+  padding: 0 14px !important;
+}
+
+
+
+.figmaLanguageButton:hover,
+.figmaThemeButton:hover,
+.figmaLoginLink:hover {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+
+
+.figmaLanguageButton svg,
+.figmaThemeButton svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+
+
+.figmaThemeButton svg circle {
+  fill: currentColor;
+  stroke: none;
+}
+
+
+
+.languageCode {
+  font-size: 13px;
+  font-weight: 560;
+}
+
+
+
+.authPageSolo {
+  background:
+    radial-gradient(circle at 18% 12%, rgba(37, 99, 235, 0.10), transparent 30%),
+    radial-gradient(circle at 82% 8%, rgba(124, 58, 237, 0.08), transparent 26%),
+    #f6f8fb !important;
+  color: #0f172a !important;
+}
+
+
+
+.authSoloCard {
+  border-color: #e2e8f0 !important;
+  background: #ffffff !important;
+  color: #0f172a !important;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.10) !important;
+}
+
+
+
+.authSoloTop {
+  border-color: #e2e8f0 !important;
+}
+
+
+
+.authSoloName,
+.authSoloTitle {
+  color: #0f172a !important;
+}
+
+
+
+.authSoloTag,
+.authSoloSub,
+.authPageSolo .betaLine {
+  color: #64748b !important;
+}
+
+
+
+.authPageSolo .field span {
+  color: #475569 !important;
+}
+
+
+
+.authPageSolo .field input {
+  border-color: #cbd5e1 !important;
+  background: #ffffff !important;
+  color: #0f172a !important;
+  box-shadow: none !important;
+}
+
+
+
+.authPageSolo .field input::placeholder {
+  color: #94a3b8 !important;
+}
+
+
+
+.authPageSolo .googleBtn,
+.authPageSolo .btn:not(.primary) {
+  border-color: #e2e8f0 !important;
+  background: #ffffff !important;
+  color: #0f172a !important;
+}
+
+
+
+.authPageSolo .googleBtn:hover,
+.authPageSolo .btn:not(.primary):hover {
+  border-color: #cbd5e1 !important;
+  background: #f8fafc !important;
+  color: #0f172a !important;
+}
+
+
+
+.authPageSolo .sep span {
+  background: #e2e8f0 !important;
+}
+
+
+
+.authPageSolo .sep div,
+.authPageSolo .muted,
+.authPageSolo .linkBtn {
+  color: #475569 !important;
+}
+
+
+
+.authPageSolo .languageToggle {
+  border-color: #e2e8f0 !important;
+  background: #ffffff !important;
+  color: #0f172a !important;
+}
+
+
+
+.authPageSolo .languageToggle span:first-child,
+.authPageSolo .languageToggle span:last-child {
+  border-color: #e2e8f0 !important;
+  background: #f8fafc !important;
+}
+
+
+
+:root[data-theme="dark"] .figmaPublicHeader {
+  border-bottom-color: #1f2937 !important;
+  background: rgba(17, 24, 39, 0.96) !important;
+}
+
+
+
+:root[data-theme="dark"] .figmaPublicNav a {
+  color: #cbd5e1 !important;
+}
+
+
+
+:root[data-theme="dark"] .figmaPublicNav a:hover,
+:root[data-theme="dark"] .figmaPublicNav a.active {
+  background: rgba(37, 99, 235, 0.16) !important;
+  color: #3b82f6 !important;
+}
+
+
+
+:root[data-theme="dark"] .figmaLanguageButton,
+:root[data-theme="dark"] .figmaThemeButton,
+:root[data-theme="dark"] .figmaLoginLink {
+  border-color: #263244 !important;
+  background: #111827 !important;
+  color: #e5e7eb !important;
+}
+
+
+
+:root[data-theme="dark"] .figmaLanguageButton:hover,
+:root[data-theme="dark"] .figmaThemeButton:hover,
+:root[data-theme="dark"] .figmaLoginLink:hover {
+  border-color: #334155 !important;
+  background: #172033 !important;
+  color: #ffffff !important;
+}
+
+
+
+:root[data-theme="dark"] .authPageSolo {
+  background:
+    radial-gradient(circle at 18% 12%, rgba(37, 99, 235, 0.24), transparent 28%),
+    radial-gradient(circle at 82% 8%, rgba(124, 58, 237, 0.18), transparent 24%),
+    linear-gradient(135deg, #080e1a 0%, #0f172a 52%, #111827 100%) !important;
+  color: #f8fafc !important;
+}
+
+
+
+:root[data-theme="dark"] .authSoloCard {
+  border-color: rgba(148, 163, 184, 0.2) !important;
+  background: rgba(15, 23, 42, 0.94) !important;
+  color: #f8fafc !important;
+  box-shadow: 0 28px 80px rgba(2, 6, 23, 0.46) !important;
+}
+
+
+
+:root[data-theme="dark"] .authSoloTop {
+  border-color: rgba(148, 163, 184, 0.18) !important;
+}
+
+
+
+:root[data-theme="dark"] .authSoloName,
+:root[data-theme="dark"] .authSoloTitle {
+  color: #f8fafc !important;
+}
+
+
+
+:root[data-theme="dark"] .authSoloTag,
+:root[data-theme="dark"] .authSoloSub,
+:root[data-theme="dark"] .authPageSolo .betaLine {
+  color: #94a3b8 !important;
+}
+
+
+
+:root[data-theme="dark"] .authPageSolo .field span {
+  color: #cbd5e1 !important;
+}
+
+
+
+:root[data-theme="dark"] .authPageSolo .field input {
+  border-color: #263244 !important;
+  background: #0b1220 !important;
+  color: #f8fafc !important;
+}
+
+
+
+:root[data-theme="dark"] .authPageSolo .field input::placeholder {
+  color: #64748b !important;
+}
+
+
+
+:root[data-theme="dark"] .authPageSolo .googleBtn,
+:root[data-theme="dark"] .authPageSolo .btn:not(.primary) {
+  border-color: #263244 !important;
+  background: #111827 !important;
+  color: #e5e7eb !important;
+}
+
+
+
+:root[data-theme="dark"] .authPageSolo .googleBtn:hover,
+:root[data-theme="dark"] .authPageSolo .btn:not(.primary):hover {
+  border-color: #334155 !important;
+  background: #172033 !important;
+  color: #f8fafc !important;
+}
+
+
+
+:root[data-theme="dark"] .authPageSolo .sep span {
+  background: #263244 !important;
+}
+
+
+
+:root[data-theme="dark"] .authPageSolo .sep div,
+:root[data-theme="dark"] .authPageSolo .muted,
+:root[data-theme="dark"] .authPageSolo .linkBtn {
+  color: #94a3b8 !important;
+}
+
+
+
+:root[data-theme="dark"] .authPageSolo .languageToggle {
+  border-color: #263244 !important;
+  background: #111827 !important;
+  color: #dbeafe !important;
+}
+
+
+
+:root[data-theme="dark"] .authPageSolo .languageToggle span:first-child,
+:root[data-theme="dark"] .authPageSolo .languageToggle span:last-child {
+  border-color: #263244 !important;
+  background: #172033 !important;
+}
+
+
+
+@media (max-width: 760px) {
+  .figmaPublicHeaderInner {
+    width: min(100% - 28px, 1236px);
+  }
+
+  .figmaPublicNav {
+    gap: 4px !important;
+  }
+
+  .figmaPublicNav a {
+    padding-inline: 10px !important;
+  }
+
+  .figmaLanguageButton {
+    min-width: 54px;
+  }
+
+  .figmaLoginLink {
+    padding-inline: 12px !important;
+  }
+}
+
+
+
+/* Theme consistency final pass: readable app light mode and complete public dark mode. */
+
+
+:root:not([data-theme="dark"]) .app .figmaGeneratorPanel,
+:root:not([data-theme="dark"]) .app .figmaGeneratorPanelForm,
+:root:not([data-theme="dark"]) .app .figmaGeneratorPanelRuntime,
+:root:not([data-theme="dark"]) .app .figmaGeneratorMode,
+:root:not([data-theme="dark"]) .app .figmaGeneratorCallout,
+:root:not([data-theme="dark"]) .app .figmaYamlDropzone,
+:root:not([data-theme="dark"]) .app .figmaHistoryCard,
+:root:not([data-theme="dark"]) .app .docBlock,
+:root:not([data-theme="dark"]) .app .docStep,
+:root:not([data-theme="dark"]) .app .docErrorCard {
+  border-color: #dbe3ef !important;
+  background: #ffffff !important;
+  color: #0f172a !important;
+}
+
+
+
+:root:not([data-theme="dark"]) .app .figmaGeneratorPanel *,
+:root:not([data-theme="dark"]) .app .figmaGeneratorMode *,
+:root:not([data-theme="dark"]) .app .figmaGeneratorCallout *,
+:root:not([data-theme="dark"]) .app .figmaYamlDropzone *,
+:root:not([data-theme="dark"]) .app .figmaHistoryCard *,
+:root:not([data-theme="dark"]) .app .docBlock *,
+:root:not([data-theme="dark"]) .app .docStep *,
+:root:not([data-theme="dark"]) .app .docErrorCard * {
+  color: inherit;
+}
+
+
+
+:root:not([data-theme="dark"]) .app .figmaGeneratorPanel .panelText,
+:root:not([data-theme="dark"]) .app .figmaGeneratorPanel p,
+:root:not([data-theme="dark"]) .app .figmaGeneratorPanel small,
+:root:not([data-theme="dark"]) .app .figmaGeneratorPanel label,
+:root:not([data-theme="dark"]) .app .figmaGeneratorPanel .field span,
+:root:not([data-theme="dark"]) .app .docBlock p,
+:root:not([data-theme="dark"]) .app .docStep p,
+:root:not([data-theme="dark"]) .app .docErrorCard p {
+  color: #475569 !important;
+}
+
+
+
+:root:not([data-theme="dark"]) .app .figmaGeneratorPanel .panelTitle,
+:root:not([data-theme="dark"]) .app .figmaGeneratorPanel h2,
+:root:not([data-theme="dark"]) .app .figmaGeneratorPanel h3,
+:root:not([data-theme="dark"]) .app .figmaGeneratorPanel strong,
+:root:not([data-theme="dark"]) .app .docBlock h3,
+:root:not([data-theme="dark"]) .app .docStep h3,
+:root:not([data-theme="dark"]) .app .docErrorCard h3 {
+  color: #0f172a !important;
+}
+
+
+
+:root:not([data-theme="dark"]) .app .figmaGeneratorPanel input,
+:root:not([data-theme="dark"]) .app .figmaGeneratorPanel select,
+:root:not([data-theme="dark"]) .app .figmaGeneratorPanel textarea {
+  border-color: #cbd5e1 !important;
+  background: #ffffff !important;
+  color: #0f172a !important;
+}
+
+
+
+:root:not([data-theme="dark"]) .app .figmaGeneratorPanel input::placeholder,
+:root:not([data-theme="dark"]) .app .figmaGeneratorPanel textarea::placeholder {
+  color: #64748b !important;
+}
+
+
+
+:root:not([data-theme="dark"]) .app .figmaGeneratorPanel .btn:not(.primary),
+:root:not([data-theme="dark"]) .app .figmaGeneratorPanel .smallBtn:not(.primary),
+:root:not([data-theme="dark"]) .app .figmaGeneratorPanel .segmentedButton:not(.active) {
+  border-color: #dbe3ef !important;
+  background: #ffffff !important;
+  color: #0f172a !important;
+}
+
+
+
+:root:not([data-theme="dark"]) .app .figmaGeneratorPanel .btn.primary,
+:root:not([data-theme="dark"]) .app .figmaGeneratorPanel .primaryBtn,
+:root:not([data-theme="dark"]) .app .figmaGeneratorPanel .segmentedButton.active {
+  border-color: #2563eb !important;
+  background: #2563eb !important;
+  color: #ffffff !important;
+}
+
+
+
+:root[data-theme="dark"] .figmaPublicPage,
+:root[data-theme="dark"] .figmaLanding,
+:root[data-theme="dark"] .figmaDocsPage,
+:root[data-theme="dark"] .figmaExamplesPage,
+:root[data-theme="dark"] .figmaTrustPage,
+:root[data-theme="dark"] .figmaFaqPage,
+:root[data-theme="dark"] .figmaHowPage,
+:root[data-theme="dark"] .figmaArticlePage,
+:root[data-theme="dark"] .figmaComparisonPage {
+  background: #0c0f18 !important;
+  color: #f1f5f9 !important;
+}
+
+
+
+:root[data-theme="dark"] .figmaSection,
+:root[data-theme="dark"] .figmaDocsHero,
+:root[data-theme="dark"] .figmaExamplesGrid,
+:root[data-theme="dark"] .figmaTrustGrid,
+:root[data-theme="dark"] .figmaTrustYaml,
+:root[data-theme="dark"] .figmaBoundarySection,
+:root[data-theme="dark"] .figmaArticleGrid,
+:root[data-theme="dark"] .figmaFaqPreview,
+:root[data-theme="dark"] .figmaComparisonTableSection,
+:root[data-theme="dark"] .figmaFinalCta {
+  background: #0c0f18 !important;
+  color: #f1f5f9 !important;
+}
+
+
+
+:root[data-theme="dark"] .figmaLanding .figmaSection:nth-of-type(odd),
+:root[data-theme="dark"] .figmaLanding .figmaSection:nth-of-type(even) {
+  background: #0c0f18 !important;
+}
+
+
+
+/* =========================================================
+   FIX: full-width landing background in dark mode
+   Prevent white side bands on the home page
+   ========================================================= */
+
+
+
+html,
+body,
+#root {
+  min-height: 100%;
+  background: var(--page);
+}
+
+
+
+.publicPage,
+.figmaPublicPage {
+  width: 100%;
+  min-height: 100vh;
+  background: var(--page);
+}
+
+
+
+.figmaLanding,
+.landing {
+  width: 100%;
+  min-height: 100vh;
+  background: var(--page);
+  overflow-x: hidden;
+}
+
+
+
+.figmaSection,
+.figmaDocsHero,
+.figmaExamplesGrid,
+.figmaTrustGrid,
+.figmaTrustYaml,
+.figmaBoundarySection,
+.figmaFinalCta,
+.landingBand,
+.landingProofBand,
+.landingCtaBand,
+.landingRuntimeBand {
+  width: 100%;
+  background: transparent;
+}
+
+
+
+/* Keep the content centered, but not the section background */
+
+
+.figmaPublicHeaderInner,
+.figmaPublicFooterInner,
+.figmaHero,
+.figmaSection,
+.figmaFinalCta,
+.figmaDocsHero,
+.figmaDocsShell,
+.figmaExamplesGrid,
+.figmaExampleDetail,
+.figmaTrustGrid,
+.figmaTrustYaml,
+.figmaBoundarySection,
+.landingContainer {
+  max-width: min(1280px, calc(100vw - 48px));
+}
+
+
+
+/* Dark mode must color every root/page wrapper */
+
+
+:root[data-theme="dark"] html,
+:root[data-theme="dark"] body,
+:root[data-theme="dark"] #root,
+:root[data-theme="dark"] .publicPage,
+:root[data-theme="dark"] .figmaPublicPage,
+:root[data-theme="dark"] .figmaLanding,
+:root[data-theme="dark"] .landing {
+  background: var(--page);
+}
+
+
+
+/* Home sections should not leave light gutters in dark mode */
+
+
+:root[data-theme="dark"] .figmaSection,
+:root[data-theme="dark"] .figmaLanding,
+:root[data-theme="dark"] .landingBand,
+:root[data-theme="dark"] .landingProofBand,
+:root[data-theme="dark"] .landingCtaBand,
+:root[data-theme="dark"] .landingRuntimeBand {
+  background: var(--page);
+}
+
+
+
+:root[data-theme="dark"] .figmaCard,
+:root[data-theme="dark"] .figmaFeatureCard,
+:root[data-theme="dark"] .figmaStep,
+:root[data-theme="dark"] .figmaDocCard,
+:root[data-theme="dark"] .figmaExampleCard,
+:root[data-theme="dark"] .figmaTrustCard,
+:root[data-theme="dark"] .figmaTrustYaml,
+:root[data-theme="dark"] .figmaPipelineCard,
+:root[data-theme="dark"] .figmaInputChoice,
+:root[data-theme="dark"] .figmaComparisonTableSection,
+:root[data-theme="dark"] .figmaPublicFooter {
+  border-color: #1f2937 !important;
+  background: #111827 !important;
+  color: #f1f5f9 !important;
+}
+
+
+
+:root[data-theme="dark"] .figmaPipelinePivot,
+:root[data-theme="dark"] .figmaInputChoiceYaml {
+  border-color: #263244 !important;
+  background: #131c2d !important;
+}
+
+
+
+:root[data-theme="dark"] .figmaSectionHead h2,
+:root[data-theme="dark"] .figmaFinalCta h2,
+:root[data-theme="dark"] .figmaCard h2,
+:root[data-theme="dark"] .figmaCard h3,
+:root[data-theme="dark"] .figmaFeatureCard h3,
+:root[data-theme="dark"] .figmaStep h3,
+:root[data-theme="dark"] .figmaDocCard h2,
+:root[data-theme="dark"] .figmaExampleCard h2,
+:root[data-theme="dark"] .figmaTrustCard h3,
+:root[data-theme="dark"] .figmaTrustYaml h2,
+:root[data-theme="dark"] .figmaPipelineCard strong,
+:root[data-theme="dark"] .figmaInputChoice strong {
+  color: #f8fafc !important;
+}
+
+
+
+:root[data-theme="dark"] .figmaSectionHead p,
+:root[data-theme="dark"] .figmaCard p,
+:root[data-theme="dark"] .figmaFeatureCard p,
+:root[data-theme="dark"] .figmaStep p,
+:root[data-theme="dark"] .figmaDocCard p,
+:root[data-theme="dark"] .figmaExampleCard p,
+:root[data-theme="dark"] .figmaTrustCard p,
+:root[data-theme="dark"] .figmaPipelineCard small,
+:root[data-theme="dark"] .figmaInputChoice small,
+:root[data-theme="dark"] .figmaFooterBrand p,
+:root[data-theme="dark"] .figmaFooterColumns a {
+  color: #b6c5dc !important;
+}
+
+
+
+:root[data-theme="dark"] .figmaMiniTags span,
+:root[data-theme="dark"] .figmaExampleTags span,
+:root[data-theme="dark"] .figmaChipGrid span,
+:root[data-theme="dark"] .figmaProofPills span,
+:root[data-theme="dark"] .figmaBadge {
+  border-color: #263244 !important;
+  background: #172033 !important;
+  color: #dbeafe !important;
+}
+
+
+
+:root[data-theme="dark"] .figmaWarningInline,
+:root[data-theme="dark"] .figmaCalloutWarning {
+  border-color: #f59e0b !important;
+  background: rgba(245, 158, 11, 0.10) !important;
+  color: #fbbf24 !important;
+}
+
+
+
+:root[data-theme="dark"] .figmaCodeWindow,
+:root[data-theme="dark"] .figmaLogWindow,
+:root[data-theme="dark"] .figmaTerminal {
+  border-color: #1f2937 !important;
+  background: #080d16 !important;
+  color: #dbeafe !important;
+}
+
+
+
+/* FIX home dark mode: figmaSection must be full width */
+
+
+.figmaLanding {
+  width: 100%;
+  min-height: 100vh;
+  background: var(--page);
+  overflow-x: hidden;
+}
+
+
+
+.figmaLanding .figmaSection {
+  width: 100% !important;
+  max-width: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  background: var(--page);
+}
+
+
+
+/* Re-center only the content inside each section */
+
+
+.figmaLanding .figmaSection > .figmaSectionHead,
+.figmaLanding .figmaSection > .figmaTwoCards,
+.figmaLanding .figmaSection > .figmaStepper,
+.figmaLanding .figmaSection > .figmaFeatureGrid,
+.figmaLanding .figmaSection > .figmaBoundarySection {
+  width: min(1280px, calc(100vw - 48px));
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+
+/* Dark mode: no light gutters on home */
+
+
+:root[data-theme="dark"] body,
+:root[data-theme="dark"] #root,
+:root[data-theme="dark"] .publicPage,
+:root[data-theme="dark"] .figmaPublicPage,
+:root[data-theme="dark"] .figmaLanding,
+:root[data-theme="dark"] .figmaLanding .figmaSection {
+  background: var(--page);
+}
+
+
+
+@media (max-width: 680px) {
+  .figmaLanding .figmaSection > .figmaSectionHead,
+  .figmaLanding .figmaSection > .figmaTwoCards,
+  .figmaLanding .figmaSection > .figmaStepper,
+  .figmaLanding .figmaSection > .figmaFeatureGrid,
+  .figmaLanding .figmaSection > .figmaBoundarySection {
+    width: min(100vw - 24px, 100%);
+  }
+}
+
+
+
+/* FIX: remove visible seams between landing sections */
+
+
+.figmaLanding .figmaSection,
+.figmaLanding .figmaSection + .figmaSection {
+  border-top: 0 !important;
+  border-bottom: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+}
+
+
+
+/* If the seam comes from pseudo-elements */
+
+
+.figmaLanding .figmaSection::before,
+.figmaLanding .figmaSection::after {
+  display: none !important;
+  content: none !important;
+}
+
+
+
+/* Dark mode: prevent thin separator lines */
+
+
+:root[data-theme="dark"] .figmaLanding .figmaSection,
+:root[data-theme="dark"] .figmaLanding .figmaSection + .figmaSection {
+  border-top: 0 !important;
+  border-bottom: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+}
+
+
+/* Dark mode: subtle section tint only, without touching cards/blocks */
+
+
+:root[data-theme="dark"] .figmaLanding {
+  --home-dark-base: var(--page);
+  --home-dark-alt: color-mix(in srgb, var(--page) 98%, #ffffff 2%);
+}
+
+
+
+:root[data-theme="dark"] .figmaLanding .figmaSection {
+  background-color: var(--home-dark-base) !important;
+}
+
+
+
+:root[data-theme="dark"] .figmaLanding .figmaSection:nth-of-type(even) {
+  background-color: var(--home-dark-alt) !important;
+}
+
+
+
+/* Keep section content unchanged */
+
+
+:root[data-theme="dark"] .figmaLanding .figmaSection > * {
+  background-color: initial;
+}
+
+
+
+.publicPage,
+.figmaPublicPage {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+
+
+.publicPage main,
+.figmaPublicPage main {
+  flex: 1 0 auto;
+}
+
+
+
+.publicFooter,
+.figmaPublicFooter {
+  flex-shrink: 0;
+}
+
+
+/* Targeted final fixes: auth home link, app content rhythm, public footer and SaaS plans. */
+
+
+.authHomeLink {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  margin-top: 4px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 94%, transparent);
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+
+
+.authHomeLink:hover,
+.authHomeLink:focus-visible {
+  border-color: color-mix(in srgb, var(--accent) 34%, var(--line));
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, var(--surface));
+  outline: none;
+}
+
+
+
+.appContentStack {
+  display: grid;
+  gap: 22px;
+  margin-top: 24px;
+}
+
+
+
+.appContentStack > div[style*="height"] {
+  display: none !important;
+}
+
+
+
+.appContentStack > .grid,
+.appContentStack > .card,
+.appContentStack > .docSection,
+.appContentStack > section {
+  margin-top: 0 !important;
+}
+
+
+
+.appContentStack .grid + .grid,
+.appContentStack .card + .card,
+.appContentStack section + section {
+  margin-top: 0 !important;
+}
+
+
+
+.figmaPublicPage,
+.publicPage {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+
+
+.figmaPublicPage > main,
+.publicPage > main {
+  flex: 1 0 auto;
+}
+
+
+
+.figmaPublicFooter,
+.publicFooter {
+  flex-shrink: 0;
+  margin-top: auto !important;
+}
+
+
+
+.figmaExamplesPage,
+.figmaArticlePage {
+  min-height: 0;
+}
+
+
+
+.figmaPlansGrid {
+  width: min(1280px, calc(100vw - 48px));
+  max-width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin: 0 auto;
+}
+
+
+
+.figmaPlanCard {
+  min-height: 100%;
+  display: grid;
+  align-content: space-between;
+  gap: 22px;
+  padding: 24px;
+  border: 1px solid var(--figma-border);
+  border-radius: var(--figma-radius);
+  background: var(--figma-surface);
+  box-shadow: none;
+}
+
+
+
+.figmaPlanCard h3 {
+  margin: 14px 0 8px;
+  color: var(--figma-text);
+  font-size: 22px;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+
+
+.figmaPlanCard p,
+.figmaPlanCard li {
+  color: var(--figma-muted);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+
+
+.figmaPlanCard ul {
+  display: grid;
+  gap: 9px;
+  margin: 0;
+  padding-left: 18px;
+}
+
+
+
+.figmaPlanCard .figmaButton {
+  justify-self: start;
+}
+
+
+
+.figmaPlanNotice {
+  width: min(1280px, calc(100vw - 48px));
+  margin: 16px auto 0;
+  color: var(--figma-muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+
+
+:root[data-theme="dark"] .figmaPlanCard {
+  border-color: #1f2937 !important;
+  background: #111827 !important;
+  color: #f1f5f9 !important;
+}
+
+
+
+:root[data-theme="dark"] .figmaPlanCard h3 {
+  color: #f8fafc !important;
+}
+
+
+
+:root[data-theme="dark"] .figmaPlanCard p,
+:root[data-theme="dark"] .figmaPlanCard li,
+:root[data-theme="dark"] .figmaPlanNotice {
+  color: #b6c5dc !important;
+}
+
+
+
+/* Footer rhythm: keep the last public block breathable before the footer. */
+
+.figmaPublicPage > main,
+.publicPage > main {
+  display: block;
+}
+
+
+
+.figmaPublicPage > main > :last-child,
+.publicPage > main > :last-child {
+  margin-bottom: clamp(36px, 6vw, 72px);
+}
+
+
+
+.figmaLanding > .figmaFinalCta,
+.figmaFinalCta {
+  width: min(1280px, calc(100vw - 48px));
+  margin: clamp(44px, 7vw, 88px) auto clamp(44px, 7vw, 88px);
+  padding: clamp(28px, 4vw, 48px);
+  border-radius: 28px;
+}
+
+
+
+.figmaFinalCta .figmaActions {
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  max-width: 100%;
+}
+
+
+
+.figmaFinalCta .figmaButton {
+  min-width: 0;
+}
+
+
+
+/* Public card icons: restore the Figma icon tiles after the CSS split. */
+
+.figmaLanding .figmaTwoCards .figmaCard > .visualIconCard,
+.figmaExamplesPage .figmaCard > .visualIconCard,
+.figmaExamplesPage .figmaExampleCard > .visualIconCard,
+.figmaTrustPage .figmaCard > .visualIconCard,
+.figmaTrustYaml > .visualIconCard {
+  display: inline-flex;
+  width: 38px;
+  height: 38px;
+  min-width: 38px;
+  min-height: 38px;
+  margin: 0 0 14px;
+  padding: 8px;
+  border: 1px solid color-mix(in srgb, var(--figma-accent) 20%, var(--figma-border));
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--figma-accent) 10%, var(--figma-surface));
+  color: var(--figma-accent);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+  vertical-align: top;
+}
+
+
+
+.figmaLanding .figmaTwoCards .figmaCard > .visualIconCard path,
+.figmaExamplesPage .figmaCard > .visualIconCard path,
+.figmaExamplesPage .figmaExampleCard > .visualIconCard path,
+.figmaTrustPage .figmaCard > .visualIconCard path,
+.figmaTrustYaml > .visualIconCard path {
+  stroke: currentColor;
+  stroke-width: 1.9;
+}
+
+
+
+.figmaLanding .figmaTwoCards .figmaCard:nth-child(2) > .visualIconCard,
+.figmaExamplesPage .figmaCard > .visualIconCard,
+.figmaTrustYaml > .visualIconCard {
+  border-color: color-mix(in srgb, #7c3aed 20%, var(--figma-border));
+  background: color-mix(in srgb, #7c3aed 9%, var(--figma-surface));
+  color: #7c3aed;
+}
+
+
+
+.figmaTrustPage .figmaCard > .visualIconCard {
+  color: var(--figma-success);
+  border-color: color-mix(in srgb, var(--figma-success) 20%, var(--figma-border));
+  background: color-mix(in srgb, var(--figma-success) 10%, var(--figma-surface));
+}
+
+
+
+.figmaTrustPage .figmaBoundarySection .figmaCard:nth-child(2) > .visualIconCard {
+  color: var(--figma-warning);
+  border-color: color-mix(in srgb, var(--figma-warning) 24%, var(--figma-border));
+  background: color-mix(in srgb, var(--figma-warning) 12%, var(--figma-surface));
+}
+
+
+
+/* App header controls reuse the public Figma theme/language buttons. */
+
+.topbar .figmaLanguageButton,
+.topbar .figmaThemeButton {
+  flex: 0 0 auto;
+  min-height: 36px;
+  height: 36px;
+  border-radius: 8px;
+  box-shadow: none;
+  transform: none;
+}
+
+
+
+.topbar .figmaLanguageButton {
+  min-width: 54px;
+  padding-inline: 10px;
+}
+
+
+
+.topbar .figmaThemeButton {
+  width: 36px;
+  min-width: 36px;
+  padding: 0;
+}
+
+
+
+:root:not([data-theme="dark"]) .topbar .figmaLanguageButton,
+:root:not([data-theme="dark"]) .topbar .figmaThemeButton {
+  border-color: #e2e8f0;
+  background: #ffffff;
+  color: #0f172a;
+}
+
+
+
+:root:not([data-theme="dark"]) .topbar .figmaLanguageButton:hover,
+:root:not([data-theme="dark"]) .topbar .figmaThemeButton:hover {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+
+
+:root[data-theme="dark"] .topbar .figmaLanguageButton,
+:root[data-theme="dark"] .topbar .figmaThemeButton {
+  border-color: #2b384f;
+  background: #111827;
+  color: #dbeafe;
+}
+
+
+
+:root[data-theme="dark"] .topbar .figmaLanguageButton:hover,
+:root[data-theme="dark"] .topbar .figmaThemeButton:hover {
+  border-color: #3b4a63;
+  background: #172033;
+  color: #ffffff;
+}
+
+
+
+.topbar .figmaLanguageButton svg,
+.topbar .figmaThemeButton svg {
+  width: 15px;
+  height: 15px;
+}
+
+
+
+/* Mobile navigation and theme/language parity across public, auth and app. */
+
+.figmaMobileMenuButton {
+  min-height: 36px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #0f172a;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 620;
+  line-height: 1;
+}
+
+
+
+.figmaMobileMenuButton:hover,
+.figmaMobileMenuButton[aria-expanded="true"] {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+}
+
+
+
+:root[data-theme="dark"] .figmaMobileMenuButton {
+  border-color: #2b384f;
+  background: #111827;
+  color: #dbeafe;
+}
+
+
+
+:root[data-theme="dark"] .figmaMobileMenuButton:hover,
+:root[data-theme="dark"] .figmaMobileMenuButton[aria-expanded="true"] {
+  border-color: #3b4a63;
+  background: #172033;
+  color: #ffffff;
+}
+
+
+
+.authSoloTop .figmaLanguageButton {
+  flex: 0 0 auto;
+}
+
+
+
+@media (max-width: 900px) {
+  .appContentStack {
+    gap: 18px;
+    margin-top: 20px;
+  }
+
+  .figmaPlansGrid {
+    grid-template-columns: 1fr;
+    width: min(100vw - 28px, 100%);
+  }
+
+  .figmaPlanNotice {
+    width: min(100vw - 28px, 100%);
+  }
+
+  .figmaPublicPage > main > :last-child,
+  .publicPage > main > :last-child {
+    margin-bottom: 40px;
+  }
+
+  .figmaLanding > .figmaFinalCta,
+  .figmaFinalCta {
+    width: min(100vw - 28px, 100%);
+    margin-top: 40px;
+    margin-bottom: 40px;
+    padding: 22px;
+    border-radius: 22px;
+  }
+
+  .figmaFinalCta .figmaActions {
+    width: 100%;
+  }
+
+  .figmaFinalCta .figmaButton {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .figmaLanding .figmaTwoCards .figmaCard > .visualIconCard,
+  .figmaExamplesPage .figmaCard > .visualIconCard,
+  .figmaExamplesPage .figmaExampleCard > .visualIconCard,
+  .figmaTrustPage .figmaCard > .visualIconCard,
+  .figmaTrustYaml > .visualIconCard {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    min-height: 36px;
+  }
+
+  .topbar .figmaLanguageButton,
+  .topbar .figmaThemeButton {
+    width: auto;
+  }
+
+  .topbar .figmaThemeButton {
+    width: 36px;
+  }
+
+  .figmaDocsShell {
+    width: min(100vw - 28px, 100%);
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding-top: 22px;
+  }
+
+  .figmaDocsSidebar {
+    position: static;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--figma-border);
+    border-radius: 16px;
+    background: var(--figma-surface);
+    overflow: visible;
+  }
+
+  .figmaDocsSidebar a {
+    min-height: 42px;
+    justify-content: flex-start;
+  }
+
+  .figmaDocsContent {
+    gap: 16px;
+  }
+
+  .figmaDocCard,
+  .figmaYamlDocCard {
+    padding: 18px;
+    border-radius: 16px;
+  }
+}
+
+
+
+@media (max-width: 760px) {
+  .figmaPublicHeaderInner {
+    position: relative;
+    min-height: 58px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding-block: 10px;
+    overflow: visible;
+  }
+
+  .figmaBrand {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .figmaBrand small {
+    display: none;
+  }
+
+  .figmaMobileMenuButton {
+    display: inline-flex;
+    order: 3;
+    flex: 0 0 auto;
+  }
+
+  .figmaHeaderActions {
+    order: 2;
+    flex: 0 0 auto;
+    gap: 6px !important;
+  }
+
+  .figmaHeaderActions .figmaLoginLink {
+    display: inline-flex;
+    min-height: 36px;
+    padding-inline: 12px !important;
+  }
+
+  .figmaPublicNav {
+    position: absolute;
+    z-index: 80;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    display: none;
+    width: 100%;
+    margin-top: 2px;
+    padding: 8px;
+    border: 1px solid var(--figma-border);
+    border-radius: 14px;
+    background: var(--figma-surface);
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.10);
+  }
+
+  .figmaPublicNav.figmaPublicNavOpen {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .figmaPublicNav a {
+    min-height: 42px !important;
+    justify-content: flex-start;
+    padding-inline: 12px !important;
+  }
+
+  :root[data-theme="dark"] .figmaPublicNav {
+    border-color: #2b384f;
+    background: #111827;
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.28);
+  }
+
+  .main {
+    width: 100%;
+    margin-left: 0 !important;
+    padding: 14px;
+    overflow-x: hidden;
+  }
+
+  .header {
+    display: grid;
+    grid-template-columns: 1fr;
+    padding: 14px;
+    border-radius: 16px;
+  }
+
+  .hgroup {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 10px;
+    align-items: start;
+  }
+
+  .hgroup h1 {
+    font-size: clamp(22px, 7vw, 28px);
+    line-height: 1.08;
+  }
+
+  .topbar {
+    justify-content: flex-start;
+    gap: 8px;
+  }
+
+  .topbar > * {
+    width: auto !important;
+    max-width: 100%;
+  }
+
+  .topbar .figmaLanguageButton,
+  .topbar .figmaThemeButton {
+    min-height: 36px;
+  }
+
+  .authSoloTop {
+    align-items: center;
+  }
+
+  .burger,
+  .closeNav {
+    min-width: 40px;
+    min-height: 40px;
+    border: 1px solid #dbe4f0;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #0f172a;
+    box-shadow: none;
+  }
+
+  .burger:hover,
+  .closeNav:hover {
+    border-color: #cbd5e1;
+    background: #f8fafc;
+    color: #2563eb;
+  }
+
+  :root[data-theme="dark"] .burger,
+  :root[data-theme="dark"] .closeNav {
+    border-color: #2b384f;
+    background: #111827;
+    color: #dbeafe;
+  }
+
+  :root[data-theme="dark"] .burger:hover,
+  :root[data-theme="dark"] .closeNav:hover {
+    border-color: #3b4a63;
+    background: #172033;
+    color: #ffffff;
+  }
+
+  .sidebar {
+    top: 0 !important;
+    left: 0 !important;
+    width: min(320px, calc(100vw - 28px)) !important;
+    max-width: calc(100vw - 28px);
+    height: 100dvh;
+    min-height: 100dvh;
+    padding: 14px 12px;
+    border-right: 1px solid #dbe4f0;
+    background: #ffffff;
+    box-shadow: 24px 0 60px rgba(15, 23, 42, 0.18);
+    transform: translateX(calc(-100% - 20px));
+    transition: transform 0.18s ease;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  :root[data-theme="dark"] .sidebar {
+    border-color: #263244;
+    background: #111827;
+    box-shadow: 24px 0 60px rgba(0, 0, 0, 0.36);
+  }
+
+  .overlay.show {
+    display: block;
+    backdrop-filter: blur(2px);
+  }
+
+  .appContentStack {
+    width: 100%;
+  }
+
+  .figmaGeneratorDashboard,
+  .grid,
+  .grid.cols-2,
+  .grid.cols-3 {
+    grid-template-columns: 1fr !important;
+  }
+
+  .figmaGeneratorPanel,
+  .figmaGeneratorCallout,
+  .figmaYamlDropzone,
+  .figmaGeneratorMode,
+  .figmaHistoryCard,
+  .card,
+  .docSection {
+    min-width: 0;
+    padding: 16px;
+  }
+
+  .tableWrap,
+  .figmaTableWrap,
+  .logsPanel,
+  .figmaTerminal,
+  .figmaCodeWindow {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+}
+
+
+
+@media (max-width: 520px) {
+  .figmaPublicHeaderInner {
+    gap: 6px;
+  }
+
+  .figmaHeaderActions {
+    justify-content: flex-end;
+    gap: 5px !important;
+  }
+
+  .figmaMobileMenuButton {
+    padding-inline: 10px;
+  }
+
+  .figmaHeaderActions .figmaLoginLink {
+    padding-inline: 10px !important;
+    font-size: 12px;
+  }
+
+  .figmaDocsShell,
+  .figmaDocsHero,
+  .figmaFinalCta,
+  .figmaExamplesGrid,
+  .figmaTrustGrid,
+  .figmaTrustYaml {
+    width: min(100vw - 28px, 100%);
+  }
+
+  .figmaCodeWindow,
+  .figmaTableWrap,
+  .figmaTerminal,
+  .logsPanel {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+}
+
+
+
+/* Final mobile doc/nav fix: opaque dropdown and single-column docs. */
+
+@media (max-width: 900px) {
+  .figmaPublicHeader {
+    position: sticky;
+    top: 0;
+    z-index: 90;
+    overflow: visible;
+  }
+
+  .figmaPublicHeaderInner {
+    overflow: visible;
+  }
+
+  .figmaPublicNav {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    opacity: 1 !important;
+    backdrop-filter: none !important;
+  }
+
+  .figmaPublicNav.figmaPublicNavOpen {
+    display: grid !important;
+  }
+
+  .figmaPublicNav a {
+    border-radius: 10px !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+  }
+
+  .figmaPublicNav a:hover,
+  .figmaPublicNav a.active {
+    background: #eff6ff !important;
+    color: #2563eb !important;
+  }
+
+  :root[data-theme="dark"] .figmaPublicNav {
+    border-color: #334155 !important;
+    background: #0f172a !important;
+    color: #e5edf8 !important;
+  }
+
+  :root[data-theme="dark"] .figmaPublicNav a {
+    background: #0f172a !important;
+    color: #e5edf8 !important;
+  }
+
+  :root[data-theme="dark"] .figmaPublicNav a:hover,
+  :root[data-theme="dark"] .figmaPublicNav a.active {
+    background: #172554 !important;
+    color: #dbeafe !important;
+  }
+
+  .figmaDocsPage {
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  .figmaDocsShell {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    width: min(100vw - 28px, 100%) !important;
+    gap: 16px !important;
+    padding-top: 24px !important;
+  }
+
+  .figmaDocsSidebar {
+    position: static !important;
+    top: auto !important;
+    max-height: none !important;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    width: 100% !important;
+    overflow: visible !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+  }
+
+  :root[data-theme="dark"] .figmaDocsSidebar {
+    border-color: #334155 !important;
+    background: #111827 !important;
+    color: #e5edf8 !important;
+  }
+
+  .figmaDocsSidebar strong {
+    display: block !important;
+    padding: 8px 10px 2px !important;
+  }
+
+  .figmaDocsSidebar a {
+    min-width: 0 !important;
+    width: 100% !important;
+    min-height: 42px !important;
+    justify-content: flex-start !important;
+    white-space: normal !important;
+  }
+
+  .figmaDocsContent,
+  .figmaDocsIntro,
+  .figmaDocCard,
+  .figmaYamlDocCard {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+
+  .figmaDocsIntro h1 {
+    font-size: clamp(32px, 10vw, 46px) !important;
+    line-height: 1.02 !important;
+  }
+
+  .figmaTableWrap,
+  .figmaCodeWindow {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  .app .docLandingCard,
+  .app .docSection,
+  .app .docSection > .card,
+  .app .docBlock,
+  .app .docStep,
+  .app .docErrorCard {
+    min-width: 0 !important;
+    width: 100% !important;
+  }
+
+  .app .docGuideGrid,
+  .app .docSectionGrid,
+  .app .docErrorGrid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .app .docTechGrid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+  }
+
+  .app .docNumbered li,
+  .app .docList li {
+    min-width: 0;
+  }
+}

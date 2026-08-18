@@ -1,0 +1,294 @@
+/*
+ * Extracted from ../styles.css without intentional visual changes.
+ * Keep cascade order controlled by ../styles.css imports.
+ */
+
+
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+
+
+body {
+  margin: 0;
+  color: var(--ink);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  background: var(--page);
+  letter-spacing: 0;
+}
+
+
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+
+
+button,
+input,
+select,
+textarea {
+  color: inherit;
+  font: inherit;
+  letter-spacing: 0;
+}
+
+
+
+button {
+  border: 0;
+}
+
+
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--accent) 22%, transparent);
+  outline-offset: 2px;
+}
+
+
+
+.input,
+.field input,
+select,
+textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 11px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+
+
+.input:hover,
+.field input:hover,
+select:hover,
+textarea:hover {
+  border-color: var(--line-strong);
+}
+
+
+
+.input:focus,
+.field input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 16%, transparent);
+}
+
+
+
+.tooltipWrap[data-tooltip]:hover::after,
+.tooltipWrap[data-tooltip]:focus-visible::after,
+.dockerTooltipTarget[data-tooltip]:hover::after,
+.dockerTooltipTarget[data-tooltip]:focus-visible::after {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+
+
+.tooltipWrap[data-tooltip]:hover::before,
+.tooltipWrap[data-tooltip]:focus-visible::before,
+.dockerTooltipTarget[data-tooltip]:hover::before,
+.dockerTooltipTarget[data-tooltip]:focus-visible::before {
+  opacity: 1;
+  transform: translate(-50%, 0) rotate(45deg);
+}
+
+
+
+.nav a {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  min-height: 44px;
+  padding: 10px 10px;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  color: var(--muted);
+  font-weight: 760;
+  transition:
+    padding 0.22s ease,
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease;
+}
+
+
+
+.nav a:hover {
+  color: var(--ink);
+  background: var(--surface-soft);
+}
+
+
+
+.nav a.active {
+  color: var(--ink);
+  border-color: color-mix(in srgb, var(--accent) 28%, transparent);
+  background: var(--accent-soft);
+}
+
+
+
+.navSubmenu a {
+  min-height: auto;
+  padding: 6px 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.35;
+  text-decoration: none;
+}
+
+
+
+.navSubmenu a:hover {
+  color: var(--ink);
+  background: transparent;
+}
+
+
+
+.landingLinks a {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 6px;
+  white-space: nowrap;
+}
+
+
+
+.landingLinks a:hover {
+  color: var(--accent);
+}
+
+
+
+.landingFooterLinks a:hover {
+  color: var(--ink);
+}
+
+
+
+.landingLinks a.active {
+  color: var(--accent);
+}
+
+
+
+.figmaDocsSidebar a,
+.figmaExampleDetail .figmaDocsSidebar a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+
+
+.input:disabled,
+input:disabled,
+select:disabled,
+textarea:disabled {
+  cursor: not-allowed;
+  opacity: 0.64;
+}
+
+
+
+.pagination button,
+.pager button,
+.paginationControls button,
+.pageButton {
+  min-height: 38px;
+  min-width: 38px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--ink);
+  font-weight: 700;
+}
+
+
+
+.pagination button:hover:not(:disabled),
+.pager button:hover:not(:disabled),
+.paginationControls button:hover:not(:disabled),
+.pageButton:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--accent) 36%, var(--line));
+  background: var(--accent-soft);
+}
+
+
+
+.pagination button[aria-current="page"],
+.pager button[aria-current="page"],
+.paginationControls button[aria-current="page"],
+.pageButton.active {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+}
+
+
+
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+
+
+.authForm .field input {
+  min-height: 46px;
+  border-radius: 10px;
+  background: var(--surface);
+}
+
+
+
+.authForm .field input:hover {
+  border-color: color-mix(in srgb, var(--accent) 28%, var(--line));
+}
+
+
+
+.authForm .field input,
+.input,
+input,
+select,
+textarea {
+  border-color: color-mix(in srgb, var(--line) 92%, transparent);
+}
+
+
+
+.authForm .field input:focus,
+.input:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: color-mix(in srgb, var(--accent) 54%, var(--line));
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 12%, transparent);
+}
