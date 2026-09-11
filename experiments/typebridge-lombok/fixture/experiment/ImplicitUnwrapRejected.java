@@ -13,12 +13,14 @@ public final class ImplicitUnwrapRejected {
         UUID value() { return value; }
     }
 
-    static void raw(UUID value) {}
+    static final class RawSink {
+        RawSink customerId(UUID value) { return this; }
+    }
 
     @AdaptationScope
     static final class Mapper {
         void map(CustomerId id) {
-            raw(id); // MUST remain a compile error: strong -> raw is explicit.
+            new RawSink().customerId(id); // MUST remain a compile error: strong -> raw is explicit.
         }
     }
 }
