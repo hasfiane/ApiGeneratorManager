@@ -38,6 +38,9 @@ jobs:
       - name: Verify TypeBridge against real Lombok
         run: bash experiments/typebridge-lombok/run.sh
 
+      - name: Benchmark generated API with and without TypeBridge
+        run: bash experiments/typebridge-generator-ab/run.sh
+
   frontend:
     name: Frontend
     runs-on: ubuntu-latest
