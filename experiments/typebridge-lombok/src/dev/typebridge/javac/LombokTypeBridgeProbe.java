@@ -191,21 +191,23 @@ public final class LombokTypeBridgeProbe implements Plugin {
                         + type.getQualifiedName());
             }
             ExecutableElement constructor = unaryConstructors.get(0);
-            String raw = normalize(constructor.getParameters().get(0).asType().toString());
-            String strong = normalize(type.getQualifiedName().toString());
+            String raw = canonical(constructor.getParameters().get(0).asType().toString());
+            String strong = canonical(type.asType().toString());
             relations.add(new Relation(raw, strong));
         }
 
         private void collectType(TypeElement type) {
-            String owner = type.getQualifiedName().toString();
+            // Use the compiler's own type rendering on both sides. For nested Lombok
+            // builders this avoids mixing qualified element names with return-type names.
+            String owner = canonical(type.asType().toString());
             for (Element member : type.getEnclosedElements()) {
                 if (member.getKind() == ElementKind.METHOD) {
                     ExecutableElement method = (ExecutableElement) member;
                     java.util.List<String> params = method.getParameters().stream()
-                            .map(p -> normalize(p.asType().toString()))
+                            .map(p -> canonical(p.asType().toString()))
                             .toList();
                     methods.add(new MethodSig(owner, method.getSimpleName().toString(), params,
-                            normalize(method.getReturnType().toString())));
+                            canonical(method.getReturnType().toString())));
                 } else if (member.getKind().isClass() || member.getKind().isInterface()) {
                     collectType((TypeElement) member);
                 }
@@ -232,7 +234,7 @@ public final class LombokTypeBridgeProbe implements Plugin {
                         Map<String, String> previous = locals;
                         locals = new LinkedHashMap<>();
                         for (JCTree.JCVariableDecl param : tree.params) {
-                            locals.put(param.name.toString(), info.resolve(param.vartype.toString()));
+                            locals.put(param.name.toString(), canonical(info.resolve(param.vartype.toString())));
                         }
                         super.visitMethodDef(tree);
                         locals = previous;
@@ -240,7 +242,7 @@ public final class LombokTypeBridgeProbe implements Plugin {
 
                     @Override
                     public void visitVarDef(JCTree.JCVariableDecl tree) {
-                        if (tree.vartype != null) locals.put(tree.name.toString(), info.resolve(tree.vartype.toString()));
+                        if (tree.vartype != null) locals.put(tree.name.toString(), canonical(info.resolve(tree.vartype.toString())));
                         super.visitVarDef(tree);
                     }
 
@@ -253,8 +255,8 @@ public final class LombokTypeBridgeProbe implements Plugin {
                         }
 
                         String name = calledName(tree.meth);
-                        String receiver = receiverType(tree.meth, info, locals);
-                        String source = expressionType(tree.args.get(0), info, locals);
+                        String receiver = canonical(receiverType(tree.meth, info, locals));
+                        String source = canonical(expressionType(tree.args.get(0), info, locals));
                         if (name == null || receiver == null || source == null) {
                             result = tree;
                             return;
@@ -307,13 +309,13 @@ public final class LombokTypeBridgeProbe implements Plugin {
         private String expressionType(JCTree.JCExpression expression, UnitInfo info, Map<String, String> locals) {
             if (expression instanceof JCTree.JCIdent ident) {
                 String local = locals.get(ident.name.toString());
-                return local != null ? local : info.resolve(ident.name.toString());
+                return local != null ? local : canonical(info.resolve(ident.name.toString()));
             }
-            if (expression instanceof JCTree.JCNewClass created) return info.resolve(created.clazz.toString());
-            if (expression instanceof JCTree.JCTypeCast cast) return info.resolve(cast.clazz.toString());
+            if (expression instanceof JCTree.JCNewClass created) return canonical(info.resolve(created.clazz.toString()));
+            if (expression instanceof JCTree.JCTypeCast cast) return canonical(info.resolve(cast.clazz.toString()));
             if (expression instanceof JCTree.JCMethodInvocation call) {
                 String called = calledName(call.meth);
-                String receiver = receiverType(call.meth, info, locals);
+                String receiver = canonical(receiverType(call.meth, info, locals));
                 if (called == null) return null;
 
                 java.util.List<MethodSig> candidates = methods.stream()
@@ -338,7 +340,7 @@ public final class LombokTypeBridgeProbe implements Plugin {
 
         private JCTree.JCExpression qualifiedType(String fqcn) {
             JCTree.JCExpression expression = null;
-            for (String part : fqcn.split("\\.")) {
+            for (String part : canonical(fqcn).split("\\.")) {
                 Name name = names.fromString(part);
                 expression = expression == null ? maker.Ident(name) : maker.Select(expression, name);
             }
@@ -352,12 +354,16 @@ public final class LombokTypeBridgeProbe implements Plugin {
         return null;
     }
 
-    private static String normalize(String type) {
-        return type == null ? null : type.replace('$', '.');
+    private static String canonical(String type) {
+        if (type == null) return null;
+        String t = type.trim().replace('$', '.');
+        // Owners used by this probe are non-generic. Keep generic parameter strings intact
+        // elsewhere, but remove incidental spaces so javac/Lombok renderings compare stably.
+        return t.replace(" ", "");
     }
 
     private static boolean same(String a, String b) {
-        return a != null && b != null && normalize(a).equals(normalize(b));
+        return a != null && b != null && canonical(a).equals(canonical(b));
     }
 
     private static boolean hasAnnotation(List<JCTree.JCAnnotation> annotations, String simpleName) {
