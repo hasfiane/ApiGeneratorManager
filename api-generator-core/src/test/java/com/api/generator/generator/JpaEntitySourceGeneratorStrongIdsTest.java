@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -114,7 +113,7 @@ class JpaEntitySourceGeneratorStrongIdsTest {
     private static Map<String, String> byPath(List<GeneratedSource> sources) {
         return sources.stream().collect(Collectors.toMap(
                 GeneratedSource::relativePath,
-                GeneratedSource::content,
+                GeneratedSource::sourceCode,
                 (a, b) -> b));
     }
 }
