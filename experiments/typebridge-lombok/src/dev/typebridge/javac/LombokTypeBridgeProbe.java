@@ -1,5 +1,6 @@
 package dev.typebridge.javac;
 
+import com.sun.source.tree.AnnotationTree;
 import com.sun.source.util.JavacTask;
 import com.sun.source.util.Plugin;
 import com.sun.source.util.TaskEvent;
@@ -19,16 +20,21 @@ import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.IdentityHashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
- * Narrow integration probe for ApiGeneratorManager.
+ * ApiGeneratorManager integration engine for the TypeBridge strong-type model.
  *
- * This is intentionally not the full TypeBridge engine. It validates the critical
- * compiler contract we need from the real project: after Lombok annotation processing,
- * a generated builder member is visible and an invalid UUID -> CustomerId call can be
- * elaborated before javac attribution rejects it.
+ * Unlike the first probe, this implementation contains no CustomerId/customerId
+ * special case. It discovers @StrongType constructor relations, waits for annotation
+ * processing (including Lombok), discovers generated methods, and inserts a unique
+ * raw -> strong wrapper only inside @AdaptationScope.
+ *
+ * Strong -> raw is intentionally never implicit.
  */
 public final class LombokTypeBridgeProbe implements Plugin {
     @Override
@@ -39,92 +45,329 @@ public final class LombokTypeBridgeProbe implements Plugin {
     @Override
     public void init(JavacTask task, String... args) {
         Context context = ((BasicJavacTask) task).getContext();
-        TreeMaker maker = TreeMaker.instance(context);
-        Names names = Names.instance(context);
-        JavacElements elements = JavacElements.instance(context);
-        Set<JCTree.JCCompilationUnit> units = Collections.newSetFromMap(new IdentityHashMap<>());
+        Engine engine = new Engine(
+                TreeMaker.instance(context),
+                Names.instance(context),
+                JavacElements.instance(context)
+        );
 
         task.addTaskListener(new TaskListener() {
             private boolean rewritten;
 
-            @Override
-            public void started(TaskEvent e) {
-            }
+            @Override public void started(TaskEvent e) {}
 
             @Override
             public void finished(TaskEvent e) {
-                if (e.getKind() == TaskEvent.Kind.PARSE && e.getCompilationUnit() instanceof JCTree.JCCompilationUnit unit) {
-                    units.add(unit);
+                if (e.getKind() == TaskEvent.Kind.PARSE
+                        && e.getCompilationUnit() instanceof JCTree.JCCompilationUnit unit) {
+                    engine.index(unit);
                     return;
                 }
-                if (e.getKind() != TaskEvent.Kind.ANNOTATION_PROCESSING || rewritten) {
-                    return;
-                }
-                rewritten = true;
-
-                TypeElement builder = elements.getTypeElement("experiment.Order.OrderBuilder");
-                if (builder == null) {
-                    throw new IllegalStateException("Lombok builder type was not visible after annotation processing");
-                }
-
-                ExecutableElement setter = null;
-                for (Element member : builder.getEnclosedElements()) {
-                    if (member.getKind() == ElementKind.METHOD
-                            && member.getSimpleName().contentEquals("customerId")) {
-                        ExecutableElement method = (ExecutableElement) member;
-                        if (method.getParameters().size() == 1) {
-                            setter = method;
-                            break;
-                        }
-                    }
-                }
-                if (setter == null) {
-                    throw new IllegalStateException("Lombok customerId(CustomerId) builder method was not visible");
-                }
-                String parameterType = setter.getParameters().get(0).asType().toString();
-                if (!parameterType.equals("experiment.CustomerId")) {
-                    throw new IllegalStateException("Unexpected Lombok builder parameter type: " + parameterType);
-                }
-
-                for (JCTree.JCCompilationUnit unit : new ArrayList<>(units)) {
-                    unit.accept(new com.sun.tools.javac.tree.TreeTranslator() {
-                        @Override
-                        public void visitApply(JCTree.JCMethodInvocation tree) {
-                            super.visitApply(tree);
-                            String called = calledName(tree.meth);
-                            if (!"customerId".equals(called) || tree.args.size() != 1) {
-                                result = tree;
-                                return;
-                            }
-                            JCTree.JCExpression original = tree.args.get(0);
-                            JCTree.JCExpression strongType = qualifiedType("experiment.CustomerId", maker, names);
-                            JCTree.JCExpression wrapped = maker.at(original.pos)
-                                    .NewClass(null, List.nil(), strongType, List.of(original), null);
-                            tree.args = List.of(wrapped);
-                            result = tree;
-                        }
-                    });
+                if (e.getKind() == TaskEvent.Kind.ANNOTATION_PROCESSING && !rewritten) {
+                    rewritten = true;
+                    engine.discoverGeneratedMembers();
+                    engine.rewrite();
                 }
             }
         });
     }
 
-    private static String calledName(JCTree.JCExpression expr) {
-        if (expr instanceof JCTree.JCIdent ident) {
-            return ident.name.toString();
+    private record Relation(String raw, String strong) {}
+    private record MethodSig(String owner, String name, java.util.List<String> params, String returns) {}
+
+    private static final class UnitInfo {
+        final String pkg;
+        final Map<String, String> imports = new HashMap<>();
+        final Map<String, String> declared = new HashMap<>();
+
+        UnitInfo(JCTree.JCCompilationUnit unit) {
+            pkg = unit.getPackageName() == null ? "" : unit.getPackageName().toString();
+            for (JCTree def : unit.defs) {
+                if (def instanceof JCTree.JCImport imp && !imp.staticImport) {
+                    String q = imp.qualid.toString();
+                    if (!q.endsWith(".*")) imports.put(q.substring(q.lastIndexOf('.') + 1), q);
+                }
+            }
+            unit.accept(new com.sun.tools.javac.tree.TreeScanner() {
+                String owner = pkg;
+                @Override public void visitClassDef(JCTree.JCClassDecl tree) {
+                    String q = owner.isBlank() ? tree.name.toString() : owner + "." + tree.name;
+                    declared.putIfAbsent(tree.name.toString(), q);
+                    String previous = owner;
+                    owner = q;
+                    super.visitClassDef(tree);
+                    owner = previous;
+                }
+            });
         }
-        if (expr instanceof JCTree.JCFieldAccess access) {
-            return access.name.toString();
+
+        String resolve(String raw) {
+            if (raw == null) return null;
+            raw = raw.trim();
+            if (raw.isEmpty()) return raw;
+            if (raw.endsWith("[]")) return resolve(raw.substring(0, raw.length() - 2)) + "[]";
+            if (isPrimitive(raw)) return raw;
+            if (raw.contains("<")) return raw;
+            int dot = raw.indexOf('.');
+            if (dot > 0) {
+                String first = raw.substring(0, dot);
+                String rest = raw.substring(dot);
+                if (imports.containsKey(first)) return imports.get(first) + rest;
+                if (declared.containsKey(first)) return declared.get(first) + rest;
+                if (Character.isLowerCase(first.charAt(0))) return raw;
+                return pkg.isBlank() ? raw : pkg + "." + raw;
+            }
+            if (imports.containsKey(raw)) return imports.get(raw);
+            if (declared.containsKey(raw)) return declared.get(raw);
+            if (isJavaLang(raw)) return "java.lang." + raw;
+            return pkg.isBlank() ? raw : pkg + "." + raw;
         }
+    }
+
+    private static final class Engine {
+        private final TreeMaker maker;
+        private final Names names;
+        private final JavacElements elements;
+        private final Set<JCTree.JCCompilationUnit> units = Collections.newSetFromMap(new IdentityHashMap<>());
+        private final Map<JCTree.JCCompilationUnit, UnitInfo> infos = new IdentityHashMap<>();
+        private final java.util.List<Relation> relations = new ArrayList<>();
+        private final java.util.List<MethodSig> methods = new ArrayList<>();
+        private final Set<String> sourceTypes = new java.util.LinkedHashSet<>();
+
+        Engine(TreeMaker maker, Names names, JavacElements elements) {
+            this.maker = maker;
+            this.names = names;
+            this.elements = elements;
+        }
+
+        void index(JCTree.JCCompilationUnit unit) {
+            if (!units.add(unit)) return;
+            UnitInfo info = new UnitInfo(unit);
+            infos.put(unit, info);
+
+            unit.accept(new com.sun.tools.javac.tree.TreeScanner() {
+                String owner = info.pkg;
+
+                @Override
+                public void visitClassDef(JCTree.JCClassDecl tree) {
+                    String previous = owner;
+                    owner = previous.isBlank() ? tree.name.toString() : previous + "." + tree.name;
+                    sourceTypes.add(owner);
+
+                    if (hasAnnotation(tree.mods.annotations, "StrongType")) {
+                        java.util.List<JCTree.JCMethodDecl> ctors = new ArrayList<>();
+                        for (JCTree def : tree.defs) {
+                            if (def instanceof JCTree.JCMethodDecl method
+                                    && method.restype == null
+                                    && method.params.size() == 1) {
+                                ctors.add(method);
+                            }
+                        }
+                        if (ctors.size() != 1) {
+                            throw new IllegalStateException("@StrongType requires exactly one unary constructor: " + owner);
+                        }
+                        String raw = info.resolve(ctors.get(0).params.get(0).vartype.toString());
+                        relations.add(new Relation(raw, owner));
+                    }
+
+                    super.visitClassDef(tree);
+                    owner = previous;
+                }
+            });
+        }
+
+        void discoverGeneratedMembers() {
+            methods.clear();
+            for (String sourceType : sourceTypes) {
+                TypeElement type = elements.getTypeElement(sourceType);
+                if (type != null) collectType(type);
+            }
+        }
+
+        private void collectType(TypeElement type) {
+            String owner = type.getQualifiedName().toString();
+            for (Element member : type.getEnclosedElements()) {
+                if (member.getKind() == ElementKind.METHOD) {
+                    ExecutableElement method = (ExecutableElement) member;
+                    java.util.List<String> params = method.getParameters().stream()
+                            .map(p -> normalize(p.asType().toString()))
+                            .toList();
+                    methods.add(new MethodSig(owner, method.getSimpleName().toString(), params,
+                            normalize(method.getReturnType().toString())));
+                } else if (member.getKind().isClass() || member.getKind().isInterface()) {
+                    collectType((TypeElement) member);
+                }
+            }
+        }
+
+        void rewrite() {
+            for (JCTree.JCCompilationUnit unit : new ArrayList<>(units)) {
+                UnitInfo info = infos.get(unit);
+                unit.accept(new com.sun.tools.javac.tree.TreeTranslator() {
+                    boolean inScope;
+                    Map<String, String> locals = new LinkedHashMap<>();
+
+                    @Override
+                    public void visitClassDef(JCTree.JCClassDecl tree) {
+                        boolean previous = inScope;
+                        inScope = previous || hasAnnotation(tree.mods.annotations, "AdaptationScope");
+                        super.visitClassDef(tree);
+                        inScope = previous;
+                    }
+
+                    @Override
+                    public void visitMethodDef(JCTree.JCMethodDecl tree) {
+                        Map<String, String> previous = locals;
+                        locals = new LinkedHashMap<>();
+                        for (JCTree.JCVariableDecl param : tree.params) {
+                            locals.put(param.name.toString(), info.resolve(param.vartype.toString()));
+                        }
+                        super.visitMethodDef(tree);
+                        locals = previous;
+                    }
+
+                    @Override
+                    public void visitVarDef(JCTree.JCVariableDecl tree) {
+                        if (tree.vartype != null) locals.put(tree.name.toString(), info.resolve(tree.vartype.toString()));
+                        super.visitVarDef(tree);
+                    }
+
+                    @Override
+                    public void visitApply(JCTree.JCMethodInvocation tree) {
+                        super.visitApply(tree); // inner fluent calls first
+                        if (!inScope || tree.args.size() != 1) {
+                            result = tree;
+                            return;
+                        }
+
+                        String name = calledName(tree.meth);
+                        String receiver = receiverType(tree.meth, info, locals);
+                        String source = expressionType(tree.args.get(0), info, locals);
+                        if (name == null || receiver == null || source == null) {
+                            result = tree;
+                            return;
+                        }
+
+                        java.util.List<MethodSig> targets = methods.stream()
+                                .filter(m -> same(m.owner(), receiver) && m.name().equals(name) && m.params().size() == 1)
+                                .toList();
+                        if (targets.isEmpty()) {
+                            result = tree;
+                            return;
+                        }
+
+                        // Conservativity: if ordinary Java already has an exact target, never rewrite.
+                        if (targets.stream().anyMatch(m -> same(m.params().get(0), source))) {
+                            result = tree;
+                            return;
+                        }
+
+                        java.util.List<Relation> matches = new ArrayList<>();
+                        for (MethodSig target : targets) {
+                            String expected = target.params().get(0);
+                            for (Relation relation : relations) {
+                                if (same(relation.raw(), source) && same(relation.strong(), expected)) {
+                                    matches.add(relation);
+                                }
+                            }
+                        }
+                        if (matches.size() != 1) {
+                            result = tree;
+                            return;
+                        }
+
+                        Relation relation = matches.get(0);
+                        JCTree.JCExpression original = tree.args.get(0);
+                        JCTree.JCExpression strongType = qualifiedType(relation.strong());
+                        JCTree.JCExpression wrapped = maker.at(original.pos)
+                                .NewClass(null, List.nil(), strongType, List.of(original), null);
+                        tree.args = List.of(wrapped);
+                        result = tree;
+                    }
+                });
+            }
+        }
+
+        private String receiverType(JCTree.JCExpression method, UnitInfo info, Map<String, String> locals) {
+            if (!(method instanceof JCTree.JCFieldAccess access)) return null;
+            return expressionType(access.selected, info, locals);
+        }
+
+        private String expressionType(JCTree.JCExpression expression, UnitInfo info, Map<String, String> locals) {
+            if (expression instanceof JCTree.JCIdent ident) {
+                String local = locals.get(ident.name.toString());
+                return local != null ? local : info.resolve(ident.name.toString());
+            }
+            if (expression instanceof JCTree.JCNewClass created) return info.resolve(created.clazz.toString());
+            if (expression instanceof JCTree.JCTypeCast cast) return info.resolve(cast.clazz.toString());
+            if (expression instanceof JCTree.JCMethodInvocation call) {
+                String called = calledName(call.meth);
+                String receiver = receiverType(call.meth, info, locals);
+                if (called == null) return null;
+
+                java.util.List<MethodSig> candidates = methods.stream()
+                        .filter(m -> m.name().equals(called))
+                        .filter(m -> receiver == null || same(m.owner(), receiver))
+                        .filter(m -> m.params().size() == call.args.size())
+                        .toList();
+                if (candidates.size() == 1) return candidates.get(0).returns();
+            }
+            if (expression instanceof JCTree.JCLiteral literal) {
+                Object value = literal.getValue();
+                if (value == null) return "<null>";
+                if (value instanceof String) return "java.lang.String";
+                if (value instanceof Integer) return "int";
+                if (value instanceof Long) return "long";
+                if (value instanceof Boolean) return "boolean";
+                if (value instanceof Double) return "double";
+                if (value instanceof Float) return "float";
+            }
+            return null;
+        }
+
+        private JCTree.JCExpression qualifiedType(String fqcn) {
+            JCTree.JCExpression expression = null;
+            for (String part : fqcn.split("\\.")) {
+                Name name = names.fromString(part);
+                expression = expression == null ? maker.Ident(name) : maker.Select(expression, name);
+            }
+            return expression;
+        }
+    }
+
+    private static String calledName(JCTree.JCExpression expression) {
+        if (expression instanceof JCTree.JCIdent ident) return ident.name.toString();
+        if (expression instanceof JCTree.JCFieldAccess access) return access.name.toString();
         return null;
     }
 
-    private static JCTree.JCExpression qualifiedType(String fqcn, TreeMaker maker, Names names) {
-        JCTree.JCExpression result = null;
-        for (String part : fqcn.split("\\.")) {
-            Name name = names.fromString(part);
-            result = result == null ? maker.Ident(name) : maker.Select(result, name);
+    private static String normalize(String type) {
+        return type == null ? null : type.replace('$', '.');
+    }
+
+    private static boolean same(String a, String b) {
+        return a != null && b != null && normalize(a).equals(normalize(b));
+    }
+
+    private static boolean hasAnnotation(List<JCTree.JCAnnotation> annotations, String simpleName) {
+        for (AnnotationTree annotation : annotations) {
+            String type = annotation.getAnnotationType().toString();
+            if (type.equals(simpleName) || type.endsWith("." + simpleName)) return true;
         }
-        return result;
+        return false;
+    }
+
+    private static boolean isPrimitive(String type) {
+        return switch (type) {
+            case "byte", "short", "int", "long", "float", "double", "char", "boolean" -> true;
+            default -> false;
+        };
+    }
+
+    private static boolean isJavaLang(String type) {
+        return switch (type) {
+            case "String", "Integer", "Long", "Short", "Byte", "Float", "Double", "Character", "Boolean", "Object", "Void", "Number" -> true;
+            default -> false;
+        };
     }
 }
