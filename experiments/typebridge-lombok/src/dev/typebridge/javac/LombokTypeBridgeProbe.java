@@ -30,9 +30,10 @@ import java.util.Set;
  * ApiGeneratorManager integration engine for the TypeBridge strong-type model.
  *
  * Unlike the first probe, this implementation contains no CustomerId/customerId
- * special case. It discovers @StrongType constructor relations, waits for annotation
- * processing (including Lombok), discovers generated methods, and inserts a unique
- * raw -> strong wrapper only inside @AdaptationScope.
+ * special case. It discovers @StrongType declarations during parsing, waits for
+ * annotation processing (including Lombok and record completion), resolves the
+ * actual constructor relation from javac symbols, discovers generated methods,
+ * and inserts a unique raw -> strong wrapper only inside @AdaptationScope.
  *
  * Strong -> raw is intentionally never implicit.
  */
@@ -133,6 +134,7 @@ public final class LombokTypeBridgeProbe implements Plugin {
         private final java.util.List<Relation> relations = new ArrayList<>();
         private final java.util.List<MethodSig> methods = new ArrayList<>();
         private final Set<String> sourceTypes = new java.util.LinkedHashSet<>();
+        private final Set<String> strongTypes = new java.util.LinkedHashSet<>();
 
         Engine(TreeMaker maker, Names names, JavacElements elements) {
             this.maker = maker;
@@ -153,23 +155,7 @@ public final class LombokTypeBridgeProbe implements Plugin {
                     String previous = owner;
                     owner = previous.isBlank() ? tree.name.toString() : previous + "." + tree.name;
                     sourceTypes.add(owner);
-
-                    if (hasAnnotation(tree.mods.annotations, "StrongType")) {
-                        java.util.List<JCTree.JCMethodDecl> ctors = new ArrayList<>();
-                        for (JCTree def : tree.defs) {
-                            if (def instanceof JCTree.JCMethodDecl method
-                                    && method.restype == null
-                                    && method.params.size() == 1) {
-                                ctors.add(method);
-                            }
-                        }
-                        if (ctors.size() != 1) {
-                            throw new IllegalStateException("@StrongType requires exactly one unary constructor: " + owner);
-                        }
-                        String raw = info.resolve(ctors.get(0).params.get(0).vartype.toString());
-                        relations.add(new Relation(raw, owner));
-                    }
-
+                    if (hasAnnotation(tree.mods.annotations, "StrongType")) strongTypes.add(owner);
                     super.visitClassDef(tree);
                     owner = previous;
                 }
@@ -178,10 +164,36 @@ public final class LombokTypeBridgeProbe implements Plugin {
 
         void discoverGeneratedMembers() {
             methods.clear();
+            relations.clear();
+
+            for (String strongType : strongTypes) {
+                TypeElement type = elements.getTypeElement(strongType);
+                if (type == null) {
+                    throw new IllegalStateException("@StrongType symbol unavailable after processing: " + strongType);
+                }
+                collectStrongRelation(type);
+            }
+
             for (String sourceType : sourceTypes) {
                 TypeElement type = elements.getTypeElement(sourceType);
                 if (type != null) collectType(type);
             }
+        }
+
+        private void collectStrongRelation(TypeElement type) {
+            java.util.List<ExecutableElement> unaryConstructors = type.getEnclosedElements().stream()
+                    .filter(e -> e.getKind() == ElementKind.CONSTRUCTOR)
+                    .map(e -> (ExecutableElement) e)
+                    .filter(e -> e.getParameters().size() == 1)
+                    .toList();
+            if (unaryConstructors.size() != 1) {
+                throw new IllegalStateException("@StrongType requires exactly one unary constructor: "
+                        + type.getQualifiedName());
+            }
+            ExecutableElement constructor = unaryConstructors.get(0);
+            String raw = normalize(constructor.getParameters().get(0).asType().toString());
+            String strong = normalize(type.getQualifiedName().toString());
+            relations.add(new Relation(raw, strong));
         }
 
         private void collectType(TypeElement type) {
@@ -234,7 +246,7 @@ public final class LombokTypeBridgeProbe implements Plugin {
 
                     @Override
                     public void visitApply(JCTree.JCMethodInvocation tree) {
-                        super.visitApply(tree); // inner fluent calls first
+                        super.visitApply(tree);
                         if (!inScope || tree.args.size() != 1) {
                             result = tree;
                             return;
@@ -256,7 +268,6 @@ public final class LombokTypeBridgeProbe implements Plugin {
                             return;
                         }
 
-                        // Conservativity: if ordinary Java already has an exact target, never rewrite.
                         if (targets.stream().anyMatch(m -> same(m.params().get(0), source))) {
                             result = tree;
                             return;
