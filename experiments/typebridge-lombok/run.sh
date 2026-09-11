@@ -5,11 +5,11 @@ ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 EXP="$ROOT/experiments/typebridge-lombok"
 BUILD="$EXP/build"
 rm -rf "$BUILD"
-mkdir -p "$BUILD/probe" "$BUILD/no-plugin" "$BUILD/with-plugin"
+mkdir -p "$BUILD/probe" "$BUILD/no-plugin" "$BUILD/with-plugin" "$BUILD/implicit-exit"
 
 JAVA_FEATURE=$(java -version 2>&1 | sed -n '1s/.*version "\([0-9]*\).*/\1/p')
 if [[ -z "$JAVA_FEATURE" || "$JAVA_FEATURE" -lt 21 ]]; then
-  echo "TypeBridge probe requires JDK 21+; detected: $(java -version 2>&1 | head -1)" >&2
+  echo "TypeBridge experiment requires JDK 21+; detected: $(java -version 2>&1 | head -1)" >&2
   exit 2
 fi
 
@@ -31,8 +31,9 @@ cp -R "$EXP/resources/"* "$BUILD/probe/"
 jar --create --file "$BUILD/typebridge-lombok-probe.jar" -C "$BUILD/probe" .
 
 FIXTURE="$EXP/fixture/experiment/LombokFixture.java"
+NEGATIVE_EXIT="$EXP/fixture/experiment/ImplicitUnwrapRejected.java"
 
-# Negative control: the exact same source must fail when only Lombok is active.
+# Control: the positive fixture must be invalid with Lombok alone.
 set +e
 javac --release 17 \
   -cp "$LOMBOK:$BUILD/typebridge-lombok-probe.jar" \
@@ -60,6 +61,7 @@ JVM_EXPORTS=(
   -J--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED
 )
 
+# Positive: generic engine discovers the strong type and Lombok builder target.
 javac --release 17 "${JVM_EXPORTS[@]}" \
   -cp "$LOMBOK:$BUILD/typebridge-lombok-probe.jar" \
   -processorpath "$LOMBOK:$BUILD/typebridge-lombok-probe.jar" \
@@ -73,6 +75,28 @@ if [[ "$OUTPUT" != "$EXPECTED" ]]; then
   exit 6
 fi
 
-echo "PASS: real Lombok 1.18.42 generated builder was visible after processing"
-echo "PASS: TypeBridge probe elaborated UUID -> CustomerId before javac rejection"
+echo "PASS: generalized engine discovered real Lombok 1.18.42 builder members"
+echo "PASS: generalized engine elaborated declared UUID -> CustomerId relation"
 echo "PASS: runtime output is unchanged ($OUTPUT)"
+
+# Safety: the inverse relation must NOT be inferred, even inside AdaptationScope.
+set +e
+javac --release 17 "${JVM_EXPORTS[@]}" \
+  -cp "$LOMBOK:$BUILD/typebridge-lombok-probe.jar" \
+  -processorpath "$LOMBOK:$BUILD/typebridge-lombok-probe.jar" \
+  -Xplugin:TypeBridgeLombokProbe \
+  -d "$BUILD/implicit-exit" "$NEGATIVE_EXIT" \
+  >"$BUILD/implicit-exit.log" 2>&1
+IMPLICIT_EXIT_STATUS=$?
+set -e
+if [[ "$IMPLICIT_EXIT_STATUS" -eq 0 ]]; then
+  echo "FAIL: implicit CustomerId -> UUID exit unexpectedly compiled" >&2
+  exit 7
+fi
+if ! grep -Eq 'CustomerId|UUID|incompatible types' "$BUILD/implicit-exit.log"; then
+  cat "$BUILD/implicit-exit.log" >&2
+  echo "FAIL: implicit-exit rejection failed for an unexpected reason" >&2
+  exit 8
+fi
+
+echo "PASS: strong -> raw remains explicit inside AdaptationScope"
