@@ -33,15 +33,17 @@ java -cp "$BUILD/harness:$ROOT/api-generator-core/target/classes" \
 BASELINE_SOURCES=$(find "$BUILD/baseline-src" -name '*.java' -print)
 STRONG_SOURCES=$(find "$BUILD/strong-src" -name '*.java' -print)
 FIXTURE="$EXP/MapperFixture.java"
+BASELINE_RUNNER="$EXP/BaselineRunner.java"
+STRONG_RUNNER="$EXP/StrongRunner.java"
 COMMON_CP="$LOMBOK:$JPA:$TB"
 
-# A: current generator. The mapper accepts UUID directly and compiles without TypeBridge.
+# A: current generator. The exact mapper accepts UUID directly without TypeBridge.
 javac --release 17 \
   -cp "$COMMON_CP" \
   -processorpath "$LOMBOK" \
   -d "$BUILD/baseline-classes" \
-  $BASELINE_SOURCES "$FIXTURE"
-BASELINE_OUTPUT=$(java -cp "$BUILD/baseline-classes:$COMMON_CP" experiment.ab.MapperFixture)
+  $BASELINE_SOURCES "$FIXTURE" "$BASELINE_RUNNER"
+BASELINE_OUTPUT=$(java -cp "$BUILD/baseline-classes:$COMMON_CP" experiment.ab.BaselineRunner)
 
 # B negative control: same mapper + strong generated entity must fail with TypeBridge disabled.
 set +e
@@ -49,7 +51,7 @@ javac --release 17 \
   -cp "$COMMON_CP" \
   -processorpath "$LOMBOK" \
   -d "$BUILD/strong-no-plugin" \
-  $STRONG_SOURCES "$FIXTURE" \
+  $STRONG_SOURCES "$FIXTURE" "$STRONG_RUNNER" \
   >"$BUILD/strong-no-plugin.log" 2>&1
 NO_PLUGIN_STATUS=$?
 set -e
@@ -72,14 +74,14 @@ JVM_EXPORTS=(
   -J--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED
 )
 
-# B: same mapper, but TypeBridge elaborates UUID -> CustomerId after Lombok generated the builder.
+# B: exact same mapper, TypeBridge elaborates UUID -> CustomerId after Lombok generated the builder.
 javac --release 17 "${JVM_EXPORTS[@]}" \
   -cp "$COMMON_CP" \
   -processorpath "$LOMBOK:$TB" \
   -Xplugin:TypeBridgeLombokProbe \
   -d "$BUILD/strong-classes" \
-  $STRONG_SOURCES "$FIXTURE"
-STRONG_OUTPUT=$(java -cp "$BUILD/strong-classes:$COMMON_CP" experiment.ab.MapperFixture)
+  $STRONG_SOURCES "$FIXTURE" "$STRONG_RUNNER"
+STRONG_OUTPUT=$(java -cp "$BUILD/strong-classes:$COMMON_CP" experiment.ab.StrongRunner)
 
 if [[ "$BASELINE_OUTPUT" != "$STRONG_OUTPUT" ]]; then
   echo "FAIL: runtime behavior changed: baseline=$BASELINE_OUTPUT strong=$STRONG_OUTPUT" >&2
@@ -94,4 +96,5 @@ fi
 
 echo "PASS: baseline and strong-id+TypeBridge mapper source are identical"
 echo "PASS: baseline and strong-id+TypeBridge runtime output are identical ($STRONG_OUTPUT)"
+echo "PASS: strong-domain exit stays explicit in StrongRunner via .value()"
 echo "PASS: JPA strong-id AttributeConverters compile with the generated entities"
