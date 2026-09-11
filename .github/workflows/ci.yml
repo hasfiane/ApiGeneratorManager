@@ -35,6 +35,9 @@ jobs:
       - name: Run backend verification
         run: mvn -B clean verify
 
+      - name: Verify TypeBridge against real Lombok
+        run: bash experiments/typebridge-lombok/run.sh
+
   frontend:
     name: Frontend
     runs-on: ubuntu-latest
