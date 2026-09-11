@@ -9,20 +9,107 @@ public class JpaEntitySourceGenerator implements EntitySourceGenerator {
 
     @Override
     public List<GeneratedSource> generate(List<TableInfo> tables, String basePackage) {
+        return generateInternal(tables, basePackage, false);
+    }
+
+    /**
+     * Experimental A/B mode for TypeBridge: keep the current generator untouched by default,
+     * but generate semantic value types for eligible single-column primary keys.
+     *
+     * Each strong id gets an explicit JPA AttributeConverter. TypeBridge is only responsible
+     * for source-level raw -> strong adaptation; persistence conversion remains explicit here.
+     */
+    public List<GeneratedSource> generateStrongIds(List<TableInfo> tables, String basePackage) {
+        return generateInternal(tables, basePackage, true);
+    }
+
+    private List<GeneratedSource> generateInternal(List<TableInfo> tables, String basePackage, boolean strongIds) {
         Map<String, String> classMap = new LinkedHashMap<>();
         for (TableInfo t : tables) classMap.put(t.getName(), toPascal(t.getName()));
+
+        Map<String, StrongIdDef> strongIdMap = strongIds ? buildStrongIdMap(tables, classMap) : Map.of();
         List<GeneratedSource> result = new ArrayList<>();
-        for (TableInfo t : tables) result.add(buildEntity(t, basePackage, classMap));
+        if (strongIds) {
+            for (StrongIdDef def : strongIdMap.values()) {
+                result.add(buildStrongIdType(def, basePackage));
+                result.add(buildStrongIdConverter(def, basePackage));
+            }
+        }
+        for (TableInfo t : tables) result.add(buildEntity(t, basePackage, classMap, strongIdMap));
         return result;
     }
 
-    private GeneratedSource buildEntity(TableInfo table, String basePackage, Map<String, String> classMap) {
+    private Map<String, StrongIdDef> buildStrongIdMap(List<TableInfo> tables, Map<String, String> classMap) {
+        Map<String, StrongIdDef> result = new LinkedHashMap<>();
+        for (TableInfo table : tables) {
+            if (table.getPrimaryKeys().size() != 1) continue;
+            ColumnInfo pk = findCol(table, table.getPrimaryKeys().get(0));
+            if (pk == null || pk.isAutoIncrement() || pk.isArray() || pk.isJson() || pk.isEnumType()) continue;
+            String rawType = javaType(pk);
+            if (rawType.equals("Object") || rawType.equals("byte[]") || rawType.startsWith("List<")) continue;
+            String entityName = classMap.getOrDefault(table.getName(), toPascal(table.getName()));
+            result.put(table.getName(), new StrongIdDef(table.getName(), pk.getName(), entityName + "Id", rawType));
+        }
+        return result;
+    }
+
+    private GeneratedSource buildStrongIdType(StrongIdDef def, String basePackage) {
+        String pkg = basePackage + ".types";
+        String relPath = pkg.replace('.', '/') + "/" + def.typeName() + ".java";
+        Src w = new Src();
+        w.ln("package " + pkg + ";"); w.nl();
+        w.ln("import dev.typebridge.api.StrongType;");
+        rawTypeImport(def.rawType()).ifPresent(i -> w.ln("import " + i + ";"));
+        w.nl();
+        w.ln("@StrongType");
+        w.ln("public record " + def.typeName() + "(" + def.rawType() + " value) {}");
+        return new GeneratedSource(relPath, w.toString());
+    }
+
+    private GeneratedSource buildStrongIdConverter(StrongIdDef def, String basePackage) {
+        String pkg = basePackage + ".types";
+        String converter = def.typeName() + "JpaConverter";
+        String relPath = pkg.replace('.', '/') + "/" + converter + ".java";
+        Src w = new Src();
+        w.ln("package " + pkg + ";"); w.nl();
+        w.ln("import jakarta.persistence.AttributeConverter;");
+        w.ln("import jakarta.persistence.Converter;");
+        rawTypeImport(def.rawType()).ifPresent(i -> w.ln("import " + i + ";"));
+        w.nl();
+        w.ln("@Converter");
+        w.ln("public final class " + converter + " implements AttributeConverter<" + def.typeName() + ", " + def.rawType() + "> {");
+        w.ln("    @Override");
+        w.ln("    public " + def.rawType() + " convertToDatabaseColumn(" + def.typeName() + " value) {");
+        w.ln("        return value == null ? null : value.value();");
+        w.ln("    }"); w.nl();
+        w.ln("    @Override");
+        w.ln("    public " + def.typeName() + " convertToEntityAttribute(" + def.rawType() + " value) {");
+        w.ln("        return value == null ? null : new " + def.typeName() + "(value);");
+        w.ln("    }");
+        w.ln("}");
+        return new GeneratedSource(relPath, w.toString());
+    }
+
+    private Optional<String> rawTypeImport(String rawType) {
+        return switch (rawType) {
+            case "UUID" -> Optional.of("java.util.UUID");
+            case "BigDecimal" -> Optional.of("java.math.BigDecimal");
+            case "LocalDate" -> Optional.of("java.time.LocalDate");
+            case "LocalTime" -> Optional.of("java.time.LocalTime");
+            case "LocalDateTime" -> Optional.of("java.time.LocalDateTime");
+            default -> Optional.empty();
+        };
+    }
+
+    private GeneratedSource buildEntity(TableInfo table, String basePackage, Map<String, String> classMap,
+                                        Map<String, StrongIdDef> strongIdMap) {
         String pkg = basePackage + ".entity";
         String className = classMap.get(table.getName());
         String relPath = pkg.replace('.', '/') + "/" + className + ".java";
+        StrongIdDef strongId = strongIdMap.get(table.getName());
         Src w = new Src();
         w.ln("package " + pkg + ";"); w.nl();
-        buildImports(table).stream().sorted().forEach(i -> w.ln("import " + i + ";"));
+        buildImports(table, basePackage, strongId).stream().sorted().forEach(i -> w.ln("import " + i + ";"));
         w.nl();
         writeClassAnnotations(w, table);
         w.ln("public class " + className + " {"); w.nl();
@@ -32,7 +119,7 @@ public class JpaEntitySourceGenerator implements EntitySourceGenerator {
         Set<String> fkCols = fkColNames(table);
         for (ColumnInfo col : table.getColumns()) {
             if (composite && table.getPrimaryKeys().contains(col.getName())) continue;
-            writeField(w, col, table, fkCols);
+            writeField(w, col, table, fkCols, strongId);
         }
         for (ForeignKeyInfo fk : table.getForeignKeys()) {
             String ref = classMap.getOrDefault(fk.getPkTable(), toPascal(fk.getPkTable()));
@@ -54,12 +141,10 @@ public class JpaEntitySourceGenerator implements EntitySourceGenerator {
     }
 
     private void writeClassAnnotations(Src w, TableInfo t) {
-        // Soft delete : la colonne avec ColumnRole.SOFT_DELETE
         t.softDeleteColumn().ifPresent(sdCol -> {
             w.ln("@SQLDelete(sql = \"UPDATE " + t.getName() + " SET " + sdCol.getName() + " = NOW() WHERE id = ?\")");
             w.ln("@Where(clause = \"" + sdCol.getName() + " IS NULL\")");
         });
-        // Audit : présent si au moins une colonne CREATED_BY ou LAST_MODIFIED_BY
         boolean hasAudit = t.createdByColumn().isPresent() || t.lastModifiedByColumn().isPresent();
         if (hasAudit) w.ln("@EntityListeners(AuditingEntityListener.class)");
         List<IndexInfo> mu = t.getIndexes().stream().filter(i -> i.isUnique() && i.getColumns().size() > 1).toList();
@@ -88,16 +173,22 @@ public class JpaEntitySourceGenerator implements EntitySourceGenerator {
         w.ln("    }");
     }
 
-    private void writeField(Src w, ColumnInfo col, TableInfo t, Set<String> fkCols) {
+    private void writeField(Src w, ColumnInfo col, TableInfo t, Set<String> fkCols, StrongIdDef strongId) {
         if (fkCols.contains(col.getName())) return;
         boolean singlePk = t.getPrimaryKeys().size() == 1 && t.getPrimaryKeys().contains(col.getName());
-        if (singlePk) { w.ln("    @Id");
-            if (col.isAutoIncrement()) w.ln("    @GeneratedValue(strategy = GenerationType.IDENTITY)"); }
+        if (singlePk) {
+            w.ln("    @Id");
+            if (col.isAutoIncrement()) w.ln("    @GeneratedValue(strategy = GenerationType.IDENTITY)");
+            if (strongId != null && strongId.pkColumn().equals(col.getName())) {
+                w.ln("    @Convert(converter = " + strongId.typeName() + "JpaConverter.class)");
+            }
+        }
         w.ln("    @Column(" + colAttrs(col) + ")");
-        // Annotation d'audit pilotée par le ColumnRole de la colonne elle-même
         if (col.getRole() == ColumnRole.CREATED_BY)       w.ln("    @CreatedBy");
         else if (col.getRole() == ColumnRole.LAST_MODIFIED_BY) w.ln("    @LastModifiedBy");
-        w.ln("    private " + javaType(col) + " " + toCamel(col.getName()) + ";"); w.nl();
+        String fieldType = singlePk && strongId != null && strongId.pkColumn().equals(col.getName())
+                ? strongId.typeName() : javaType(col);
+        w.ln("    private " + fieldType + " " + toCamel(col.getName()) + ";"); w.nl();
     }
 
     private String colAttrs(ColumnInfo col) {
@@ -112,11 +203,16 @@ public class JpaEntitySourceGenerator implements EntitySourceGenerator {
         return String.join(", ", a);
     }
 
-    private Set<String> buildImports(TableInfo t) {
+    private Set<String> buildImports(TableInfo t, String basePackage, StrongIdDef strongId) {
         Set<String> i = new TreeSet<>();
         i.addAll(List.of("jakarta.persistence.Entity","jakarta.persistence.Table","jakarta.persistence.Column",
             "jakarta.persistence.Id","jakarta.persistence.GeneratedValue","jakarta.persistence.GenerationType","jakarta.persistence.FetchType",
             "lombok.Getter","lombok.Setter","lombok.NoArgsConstructor","lombok.AllArgsConstructor","lombok.Builder"));
+        if (strongId != null) {
+            i.add("jakarta.persistence.Convert");
+            i.add(basePackage + ".types." + strongId.typeName());
+            i.add(basePackage + ".types." + strongId.typeName() + "JpaConverter");
+        }
         if (!t.getForeignKeys().isEmpty()) i.addAll(List.of("jakarta.persistence.ManyToOne","jakarta.persistence.JoinColumn"));
         if (!t.getReferencedBy().isEmpty()) i.addAll(List.of("jakarta.persistence.OneToMany","java.util.List","java.util.ArrayList"));
         if (t.getPrimaryKeys().size() > 1) i.addAll(List.of("jakarta.persistence.EmbeddedId","jakarta.persistence.Embeddable","lombok.EqualsAndHashCode"));
@@ -204,6 +300,8 @@ public class JpaEntitySourceGenerator implements EntitySourceGenerator {
         return tp.contains("char") || tp.contains("text") || tp.contains("clob");
     }
 
+    private record StrongIdDef(String tableName, String pkColumn, String typeName, String rawType) {}
+
     private static class Src {
         private final StringBuilder sb = new StringBuilder();
         void ln(String s) { sb.append(s).append('\n'); }
@@ -211,4 +309,3 @@ public class JpaEntitySourceGenerator implements EntitySourceGenerator {
         @Override public String toString() { return sb.toString(); }
     }
 }
-
