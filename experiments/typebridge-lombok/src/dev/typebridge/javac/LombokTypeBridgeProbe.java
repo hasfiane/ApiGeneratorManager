@@ -132,7 +132,7 @@ public final class LombokTypeBridgeProbe implements Plugin {
         private final Set<JCTree.JCCompilationUnit> units = Collections.newSetFromMap(new IdentityHashMap<>());
         private final Map<JCTree.JCCompilationUnit, UnitInfo> infos = new IdentityHashMap<>();
         private final java.util.List<Relation> relations = new ArrayList<>();
-        private final java.util.List<MethodSig> methods = new ArrayList<>();
+        private final Set<MethodSig> methods = new java.util.LinkedHashSet<>();
         private final Set<String> sourceTypes = new java.util.LinkedHashSet<>();
         private final Set<String> strongTypes = new java.util.LinkedHashSet<>();
 
@@ -197,8 +197,6 @@ public final class LombokTypeBridgeProbe implements Plugin {
         }
 
         private void collectType(TypeElement type) {
-            // Use the compiler's own type rendering on both sides. For nested Lombok
-            // builders this avoids mixing qualified element names with return-type names.
             String owner = canonical(type.asType().toString());
             for (Element member : type.getEnclosedElements()) {
                 if (member.getKind() == ElementKind.METHOD) {
@@ -357,8 +355,6 @@ public final class LombokTypeBridgeProbe implements Plugin {
     private static String canonical(String type) {
         if (type == null) return null;
         String t = type.trim().replace('$', '.');
-        // Owners used by this probe are non-generic. Keep generic parameter strings intact
-        // elsewhere, but remove incidental spaces so javac/Lombok renderings compare stably.
         return t.replace(" ", "");
     }
 
