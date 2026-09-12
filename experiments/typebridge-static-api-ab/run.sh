@@ -11,10 +11,7 @@ mkdir -p "$BUILD/generator-classes"
 [[ -d "$ROOT/api-generator-core/target/classes" ]] || { echo "api-generator-core must be built first" >&2; exit 2; }
 [[ -f "$TB" ]] || { echo "TypeBridge probe jar missing; run typebridge-lombok probe first" >&2; exit 3; }
 
-# The runtime-driven generated project resolves the same local runtime used by the real product.
 mvn -q -pl api-generator-core,api-generator-runtime -am install -DskipTests
-
-# Make the experimental compiler plugin resolvable by the generated static project.
 mvn -q install:install-file \
   -Dfile="$TB" \
   -DgroupId=dev.typebridge \
@@ -34,6 +31,21 @@ java -cp "$BUILD/generator-classes:$ROOT/api-generator-core/target/classes" \
 RUNTIME="$BUILD/runtime-api"
 STATIC="$BUILD/static-api"
 
+# -Xplugin discovery uses javac's processor/plugin classloader when Maven isolates annotation processors.
+# Put the same TypeBridge artifact on that path as well as the regular compile classpath.
+python3 - "$STATIC/pom.xml" <<'PY'
+from pathlib import Path
+import sys
+p = Path(sys.argv[1])
+s = p.read_text()
+needle = '</annotationProcessorPaths>'
+entry = '<path><groupId>dev.typebridge</groupId><artifactId>typebridge-probe</artifactId><version>0.0.0-experiment</version></path>'
+if needle not in s:
+    raise SystemExit('annotationProcessorPaths marker missing')
+s = s.replace(needle, entry + needle, 1)
+p.write_text(s)
+PY
+
 now_ms() { date +%s%3N; }
 
 RUNTIME_START=$(now_ms)
@@ -47,7 +59,6 @@ MAVEN_OPTS="${MAVEN_OPTS:-} $EXPORTS" mvn -q -f "$STATIC/pom.xml" clean verify
 STATIC_VERIFY_MS=$(( $(now_ms) - STATIC_START ))
 echo "METRIC static_clean_verify_ms=$STATIC_VERIFY_MS"
 
-# The controller source deliberately uses raw UUID at HTTP boundaries while service signatures use strong IDs.
 if ! grep -q 'service.create(request.id(), request.customerId(), request.total())' "$STATIC/src/main/java/bench/staticapi/web/OrderController.java"; then
   echo "FAIL: static controller lost raw-boundary ergonomic call" >&2
   exit 4
@@ -66,7 +77,6 @@ echo "PASS: TypeBridge removes raw -> strong wrappers from controller call sites
 echo "PASS: strong -> raw exits remain explicit via .value()"
 echo "PASS: static API clean verify exercised Spring Boot + JPA + H2 + generated AttributeConverters"
 
-# Security/type-safety control: TypeBridge must never bridge one semantic ID type to another.
 cat > "$BUILD/WrongId.java" <<'JAVA'
 import bench.staticapi.types.CustomerId;
 import bench.staticapi.types.OrdersId;
