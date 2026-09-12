@@ -39,15 +39,17 @@ public final class GeneratorAb {
 
         String baselineCustomer = source(baseline, "bench/entity/Customer.java");
         String strongCustomer = source(strong, "bench/entity/Customer.java");
+        String customerId = source(strong, "bench/types/CustomerId.java");
         require(baselineCustomer.contains("private UUID id;"), "baseline Customer.id must remain UUID");
         require(!baselineCustomer.contains("CustomerId"), "baseline must not contain strong id references");
+        require(strongCustomer.contains("@EmbeddedId"), "strong Customer.id must be an EmbeddedId");
         require(strongCustomer.contains("private CustomerId id;"), "strong Customer.id must use CustomerId");
-        require(strongCustomer.contains("@Convert(converter = CustomerIdJpaConverter.class)"),
-                "strong Customer.id must declare its JPA converter");
+        require(customerId.contains("@Embeddable"), "CustomerId must be JPA embeddable");
+        require(customerId.contains("public CustomerId(UUID value)"), "CustomerId unary constructor missing");
+        require(customerId.contains("public UUID value()"), "CustomerId explicit unwrap missing");
         require(hasPath(strong, "bench/types/CustomerId.java"), "CustomerId value type missing");
-        require(hasPath(strong, "bench/types/CustomerIdJpaConverter.java"), "CustomerId converter missing");
         require(hasPath(strong, "bench/types/OrdersId.java"), "OrdersId value type missing");
-        require(hasPath(strong, "bench/types/OrdersIdJpaConverter.java"), "OrdersId converter missing");
+        require(strong.stream().noneMatch(s -> s.relativePath().contains("JpaConverter")), "PK AttributeConverters must not be generated");
 
         long baselineLoc = baseline.stream().mapToLong(s -> lines(s.sourceCode())).sum();
         long strongLoc = strong.stream().mapToLong(s -> lines(s.sourceCode())).sum();
@@ -57,7 +59,7 @@ public final class GeneratorAb {
         System.out.println("METRIC strong_loc=" + strongLoc);
         System.out.println("METRIC added_files=" + (strong.size() - baseline.size()));
         System.out.println("METRIC added_loc=" + (strongLoc - baselineLoc));
-        System.out.println("PASS: real JpaEntitySourceGenerator produced baseline and strong-id variants from the same schema");
+        System.out.println("PASS: real JpaEntitySourceGenerator produced baseline and EmbeddedId strong-id variants from the same schema");
     }
 
     private static ColumnInfo uuid(String name, boolean autoIncrement) {
@@ -104,9 +106,7 @@ public final class GeneratorAb {
         return sources.stream().anyMatch(s -> s.relativePath().equals(path));
     }
 
-    private static long lines(String source) {
-        return source.lines().count();
-    }
+    private static long lines(String source) { return source.lines().count(); }
 
     private static void require(boolean condition, String message) {
         if (!condition) throw new IllegalStateException(message);
