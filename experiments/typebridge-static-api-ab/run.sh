@@ -75,7 +75,7 @@ fi
 echo "PASS: HTTP boundary stays UUID while domain service signatures are strongly typed"
 echo "PASS: TypeBridge removes raw -> strong wrappers from controller call sites"
 echo "PASS: strong -> raw exits remain explicit via .value()"
-echo "PASS: static API clean verify exercised Spring Boot + JPA + H2 + generated AttributeConverters"
+echo "PASS: static API clean verify exercised Spring Boot + JPA + H2 + embedded strong IDs"
 
 cat > "$BUILD/WrongId.java" <<'JAVA'
 import bench.staticapi.types.CustomerId;
