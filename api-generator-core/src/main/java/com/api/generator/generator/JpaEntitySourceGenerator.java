@@ -13,11 +13,10 @@ public class JpaEntitySourceGenerator implements EntitySourceGenerator {
     }
 
     /**
-     * Experimental A/B mode for TypeBridge: keep the current generator untouched by default,
-     * but generate semantic value types for eligible single-column primary keys.
-     *
-     * Each strong id gets an explicit JPA AttributeConverter. TypeBridge is only responsible
-     * for source-level raw -> strong adaptation; persistence conversion remains explicit here.
+     * Experimental A/B mode for TypeBridge. The default generator remains unchanged.
+     * Eligible single-column primary keys become semantic value objects persisted as
+     * JPA @EmbeddedId values. TypeBridge only handles source-level raw -> strong
+     * adaptation; persistence has no implicit conversion layer.
      */
     public List<GeneratedSource> generateStrongIds(List<TableInfo> tables, String basePackage) {
         return generateInternal(tables, basePackage, true);
@@ -30,10 +29,7 @@ public class JpaEntitySourceGenerator implements EntitySourceGenerator {
         Map<String, StrongIdDef> strongIdMap = strongIds ? buildStrongIdMap(tables, classMap) : Map.of();
         List<GeneratedSource> result = new ArrayList<>();
         if (strongIds) {
-            for (StrongIdDef def : strongIdMap.values()) {
-                result.add(buildStrongIdType(def, basePackage));
-                result.add(buildStrongIdConverter(def, basePackage));
-            }
+            for (StrongIdDef def : strongIdMap.values()) result.add(buildStrongIdType(def, basePackage));
         }
         for (TableInfo t : tables) result.add(buildEntity(t, basePackage, classMap, strongIdMap));
         return result;
@@ -59,33 +55,27 @@ public class JpaEntitySourceGenerator implements EntitySourceGenerator {
         Src w = new Src();
         w.ln("package " + pkg + ";"); w.nl();
         w.ln("import dev.typebridge.api.StrongType;");
+        w.ln("import jakarta.persistence.Column;");
+        w.ln("import jakarta.persistence.Embeddable;");
+        w.ln("import java.io.Serializable;");
+        w.ln("import java.util.Objects;");
         rawTypeImport(def.rawType()).ifPresent(i -> w.ln("import " + i + ";"));
         w.nl();
         w.ln("@StrongType");
-        w.ln("public record " + def.typeName() + "(" + def.rawType() + " value) {}");
-        return new GeneratedSource(relPath, w.toString());
-    }
-
-    private GeneratedSource buildStrongIdConverter(StrongIdDef def, String basePackage) {
-        String pkg = basePackage + ".types";
-        String converter = def.typeName() + "JpaConverter";
-        String relPath = pkg.replace('.', '/') + "/" + converter + ".java";
-        Src w = new Src();
-        w.ln("package " + pkg + ";"); w.nl();
-        w.ln("import jakarta.persistence.AttributeConverter;");
-        w.ln("import jakarta.persistence.Converter;");
-        rawTypeImport(def.rawType()).ifPresent(i -> w.ln("import " + i + ";"));
-        w.nl();
-        w.ln("@Converter");
-        w.ln("public final class " + converter + " implements AttributeConverter<" + def.typeName() + ", " + def.rawType() + "> {");
-        w.ln("    @Override");
-        w.ln("    public " + def.rawType() + " convertToDatabaseColumn(" + def.typeName() + " value) {");
-        w.ln("        return value == null ? null : value.value();");
+        w.ln("@Embeddable");
+        w.ln("public final class " + def.typeName() + " implements Serializable {");
+        w.ln("    @Column(name = \"" + def.pkColumn() + "\")");
+        w.ln("    private " + def.rawType() + " value;"); w.nl();
+        w.ln("    protected " + def.typeName() + "() {}"); w.nl();
+        w.ln("    public " + def.typeName() + "(" + def.rawType() + " value) {");
+        w.ln("        this.value = Objects.requireNonNull(value, \"value\");");
         w.ln("    }"); w.nl();
-        w.ln("    @Override");
-        w.ln("    public " + def.typeName() + " convertToEntityAttribute(" + def.rawType() + " value) {");
-        w.ln("        return value == null ? null : new " + def.typeName() + "(value);");
+        w.ln("    public " + def.rawType() + " value() { return value; }"); w.nl();
+        w.ln("    @Override public boolean equals(Object other) {");
+        w.ln("        return this == other || (other instanceof " + def.typeName() + " that && Objects.equals(value, that.value));");
         w.ln("    }");
+        w.ln("    @Override public int hashCode() { return Objects.hash(value); }");
+        w.ln("    @Override public String toString() { return String.valueOf(value); }");
         w.ln("}");
         return new GeneratedSource(relPath, w.toString());
     }
@@ -114,8 +104,11 @@ public class JpaEntitySourceGenerator implements EntitySourceGenerator {
         writeClassAnnotations(w, table);
         w.ln("public class " + className + " {"); w.nl();
         boolean composite = table.getPrimaryKeys().size() > 1;
-        if (composite) { writeEmbeddableId(w, table, className); w.nl();
-            w.ln("    @EmbeddedId"); w.ln("    private " + className + "Id id;"); w.nl(); }
+        if (composite) {
+            writeEmbeddableId(w, table, className); w.nl();
+            w.ln("    @EmbeddedId");
+            w.ln("    private " + className + "Id id;"); w.nl();
+        }
         Set<String> fkCols = fkColNames(table);
         for (ColumnInfo col : table.getColumns()) {
             if (composite && table.getPrimaryKeys().contains(col.getName())) continue;
@@ -132,10 +125,12 @@ public class JpaEntitySourceGenerator implements EntitySourceGenerator {
             w.ln("    @OneToMany(mappedBy = \"" + toCamel(table.getName()) + "\", fetch = FetchType.LAZY)");
             w.ln("    private List<" + child + "> " + toCamel(ref.getPkTable()) + "List = new ArrayList<>();"); w.nl();
         }
-        for (ColumnInfo col : table.getColumns())
-            if (col.isEnumType() && col.getEnumValues() != null && col.getEnumValues().length > 0)
-                { w.ln("    public enum " + toPascal(col.getEnumTypeName() != null ? col.getEnumTypeName() : col.getName())
-                    + " { " + String.join(", ", col.getEnumValues()) + " }"); w.nl(); }
+        for (ColumnInfo col : table.getColumns()) {
+            if (col.isEnumType() && col.getEnumValues() != null && col.getEnumValues().length > 0) {
+                w.ln("    public enum " + toPascal(col.getEnumTypeName() != null ? col.getEnumTypeName() : col.getName())
+                        + " { " + String.join(", ", col.getEnumValues()) + " }"); w.nl();
+            }
+        }
         w.ln("}");
         return new GeneratedSource(relPath, w.toString());
     }
@@ -156,7 +151,9 @@ public class JpaEntitySourceGenerator implements EntitySourceGenerator {
                 if (i < mu.size() - 1) sb.append(", ");
             }
             w.ln(sb.append("})").toString());
-        } else { w.ln("@Table(name = \"" + t.getName() + "\")"); }
+        } else {
+            w.ln("@Table(name = \"" + t.getName() + "\")");
+        }
         w.ln("@Entity");
         w.ln("@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder");
     }
@@ -167,8 +164,10 @@ public class JpaEntitySourceGenerator implements EntitySourceGenerator {
         w.ln("    public static class " + cn + "Id implements java.io.Serializable {");
         for (String pk : t.getPrimaryKeys()) {
             ColumnInfo col = findCol(t, pk);
-            if (col != null) { w.ln("        @Column(name = \"" + col.getName() + "\")");
-                w.ln("        private " + javaType(col) + " " + toCamel(col.getName()) + ";"); }
+            if (col != null) {
+                w.ln("        @Column(name = \"" + col.getName() + "\")");
+                w.ln("        private " + javaType(col) + " " + toCamel(col.getName()) + ";");
+            }
         }
         w.ln("    }");
     }
@@ -176,50 +175,53 @@ public class JpaEntitySourceGenerator implements EntitySourceGenerator {
     private void writeField(Src w, ColumnInfo col, TableInfo t, Set<String> fkCols, StrongIdDef strongId) {
         if (fkCols.contains(col.getName())) return;
         boolean singlePk = t.getPrimaryKeys().size() == 1 && t.getPrimaryKeys().contains(col.getName());
+        boolean strongPk = singlePk && strongId != null && strongId.pkColumn().equals(col.getName());
+        if (strongPk) {
+            w.ln("    @EmbeddedId");
+            w.ln("    private " + strongId.typeName() + " " + toCamel(col.getName()) + ";"); w.nl();
+            return;
+        }
         if (singlePk) {
             w.ln("    @Id");
             if (col.isAutoIncrement()) w.ln("    @GeneratedValue(strategy = GenerationType.IDENTITY)");
-            if (strongId != null && strongId.pkColumn().equals(col.getName())) {
-                w.ln("    @Convert(converter = " + strongId.typeName() + "JpaConverter.class)");
-            }
         }
         w.ln("    @Column(" + colAttrs(col) + ")");
-        if (col.getRole() == ColumnRole.CREATED_BY)       w.ln("    @CreatedBy");
+        if (col.getRole() == ColumnRole.CREATED_BY) w.ln("    @CreatedBy");
         else if (col.getRole() == ColumnRole.LAST_MODIFIED_BY) w.ln("    @LastModifiedBy");
-        String fieldType = singlePk && strongId != null && strongId.pkColumn().equals(col.getName())
-                ? strongId.typeName() : javaType(col);
-        w.ln("    private " + fieldType + " " + toCamel(col.getName()) + ";"); w.nl();
+        w.ln("    private " + javaType(col) + " " + toCamel(col.getName()) + ";"); w.nl();
     }
 
     private String colAttrs(ColumnInfo col) {
         List<String> a = new ArrayList<>();
         a.add("name = \"" + col.getName() + "\"");
-        if (!col.isNullable())   a.add("nullable = false");
-        if (col.isUnique())      a.add("unique = true");
-        if (col.isJson())        a.add("columnDefinition = \"jsonb\"");
-        if (col.isArray())       a.add("columnDefinition = \"" + col.getJdbcType() + "\"");
+        if (!col.isNullable()) a.add("nullable = false");
+        if (col.isUnique()) a.add("unique = true");
+        if (col.isJson()) a.add("columnDefinition = \"jsonb\"");
+        if (col.isArray()) a.add("columnDefinition = \"" + col.getJdbcType() + "\"");
         if (col.getSize() > 0 && isString(col)) a.add("length = " + col.getSize());
-        if (col.getDecimalDigits() > 0) { a.add("precision = " + col.getSize()); a.add("scale = " + col.getDecimalDigits()); }
+        if (col.getDecimalDigits() > 0) {
+            a.add("precision = " + col.getSize());
+            a.add("scale = " + col.getDecimalDigits());
+        }
         return String.join(", ", a);
     }
 
     private Set<String> buildImports(TableInfo t, String basePackage, StrongIdDef strongId) {
         Set<String> i = new TreeSet<>();
-        i.addAll(List.of("jakarta.persistence.Entity","jakarta.persistence.Table","jakarta.persistence.Column",
-            "jakarta.persistence.Id","jakarta.persistence.GeneratedValue","jakarta.persistence.GenerationType","jakarta.persistence.FetchType",
-            "lombok.Getter","lombok.Setter","lombok.NoArgsConstructor","lombok.AllArgsConstructor","lombok.Builder"));
+        i.addAll(List.of("jakarta.persistence.Entity", "jakarta.persistence.Table", "jakarta.persistence.Column",
+                "jakarta.persistence.Id", "jakarta.persistence.GeneratedValue", "jakarta.persistence.GenerationType", "jakarta.persistence.FetchType",
+                "lombok.Getter", "lombok.Setter", "lombok.NoArgsConstructor", "lombok.AllArgsConstructor", "lombok.Builder"));
         if (strongId != null) {
-            i.add("jakarta.persistence.Convert");
+            i.add("jakarta.persistence.EmbeddedId");
             i.add(basePackage + ".types." + strongId.typeName());
-            i.add(basePackage + ".types." + strongId.typeName() + "JpaConverter");
         }
-        if (!t.getForeignKeys().isEmpty()) i.addAll(List.of("jakarta.persistence.ManyToOne","jakarta.persistence.JoinColumn"));
-        if (!t.getReferencedBy().isEmpty()) i.addAll(List.of("jakarta.persistence.OneToMany","java.util.List","java.util.ArrayList"));
-        if (t.getPrimaryKeys().size() > 1) i.addAll(List.of("jakarta.persistence.EmbeddedId","jakarta.persistence.Embeddable","lombok.EqualsAndHashCode"));
-        if (t.hasSoftDelete()) i.addAll(List.of("org.hibernate.annotations.SQLDelete","org.hibernate.annotations.Where"));
+        if (!t.getForeignKeys().isEmpty()) i.addAll(List.of("jakarta.persistence.ManyToOne", "jakarta.persistence.JoinColumn"));
+        if (!t.getReferencedBy().isEmpty()) i.addAll(List.of("jakarta.persistence.OneToMany", "java.util.List", "java.util.ArrayList"));
+        if (t.getPrimaryKeys().size() > 1) i.addAll(List.of("jakarta.persistence.EmbeddedId", "jakarta.persistence.Embeddable", "lombok.EqualsAndHashCode"));
+        if (t.hasSoftDelete()) i.addAll(List.of("org.hibernate.annotations.SQLDelete", "org.hibernate.annotations.Where"));
         boolean hasAudit = t.createdByColumn().isPresent() || t.lastModifiedByColumn().isPresent();
         if (hasAudit) i.addAll(List.of("org.springframework.data.jpa.domain.support.AuditingEntityListener",
-            "jakarta.persistence.EntityListeners","org.springframework.data.annotation.CreatedBy","org.springframework.data.annotation.LastModifiedBy"));
+                "jakarta.persistence.EntityListeners", "org.springframework.data.annotation.CreatedBy", "org.springframework.data.annotation.LastModifiedBy"));
         if (t.getIndexes().stream().anyMatch(x -> x.isUnique() && x.getColumns().size() > 1)) i.add("jakarta.persistence.UniqueConstraint");
         for (ColumnInfo col : t.getColumns()) {
             String tp = col.getJdbcType().toLowerCase(Locale.ROOT);
@@ -235,47 +237,54 @@ public class JpaEntitySourceGenerator implements EntitySourceGenerator {
 
     private String javaType(ColumnInfo col) {
         if (col.isEnumType()) return toPascal(col.getEnumTypeName() != null ? col.getEnumTypeName() : col.getName());
-        if (col.isArray())    return "List<" + box(baseType(col.getArrayComponentType())) + ">";
-        if (col.isJson())     return "String";
+        if (col.isArray()) return "List<" + box(baseType(col.getArrayComponentType())) + ">";
+        if (col.isJson()) return "String";
         return baseType(col.getJdbcType());
     }
 
     private String baseType(String t) {
         if (t == null) return "Object";
         return switch (t.toLowerCase(Locale.ROOT)) {
-            case "int2","smallint"                    -> "Short";
-            case "int4","int","integer","serial"      -> "Integer";
-            case "int8","bigint","bigserial"          -> "Long";
-            case "float4","real"                     -> "Float";
-            case "float8","double","double precision" -> "Double";
-            case "numeric","decimal"                 -> "BigDecimal";
-            case "bool","boolean"                    -> "Boolean";
-            case "char","bpchar","character"         -> "Character";
-            case "varchar","text","character varying","tinytext","mediumtext","longtext","clob","nclob","nvarchar" -> "String";
-            case "date"                              -> "LocalDate";
-            case "time","timetz"                     -> "LocalTime";
-            case "timestamp","timestamptz","datetime","timestamp with time zone","timestamp without time zone" -> "LocalDateTime";
-            case "uuid"                              -> "UUID";
-            case "json","jsonb"                      -> "String";
-            case "bytea","blob","mediumblob","longblob" -> "byte[]";
-            default                                  -> "Object";
+            case "int2", "smallint" -> "Short";
+            case "int4", "int", "integer", "serial" -> "Integer";
+            case "int8", "bigint", "bigserial" -> "Long";
+            case "float4", "real" -> "Float";
+            case "float8", "double", "double precision" -> "Double";
+            case "numeric", "decimal" -> "BigDecimal";
+            case "bool", "boolean" -> "Boolean";
+            case "char", "bpchar", "character" -> "Character";
+            case "varchar", "text", "character varying", "tinytext", "mediumtext", "longtext", "clob", "nclob", "nvarchar" -> "String";
+            case "date" -> "LocalDate";
+            case "time", "timetz" -> "LocalTime";
+            case "timestamp", "timestamptz", "datetime", "timestamp with time zone", "timestamp without time zone" -> "LocalDateTime";
+            case "uuid" -> "UUID";
+            case "json", "jsonb" -> "String";
+            case "bytea", "blob", "mediumblob", "longblob" -> "byte[]";
+            default -> "Object";
         };
     }
 
     private String box(String t) {
         return switch (t) {
-            case "int" -> "Integer"; case "long" -> "Long"; case "double" -> "Double";
-            case "float" -> "Float"; case "boolean" -> "Boolean"; case "short" -> "Short";
-            case "char" -> "Character"; default -> t;
+            case "int" -> "Integer";
+            case "long" -> "Long";
+            case "double" -> "Double";
+            case "float" -> "Float";
+            case "boolean" -> "Boolean";
+            case "short" -> "Short";
+            case "char" -> "Character";
+            default -> t;
         };
     }
 
     public static String toPascal(String s) {
         if (s == null || s.isBlank()) return "Unknown";
-        StringBuilder sb = new StringBuilder(); boolean up = true;
+        StringBuilder sb = new StringBuilder();
+        boolean up = true;
         for (char c : s.toCharArray()) {
             if (c == '_') { up = true; continue; }
-            sb.append(up ? Character.toUpperCase(c) : Character.toLowerCase(c)); up = false;
+            sb.append(up ? Character.toUpperCase(c) : Character.toLowerCase(c));
+            up = false;
         }
         return sb.toString();
     }
@@ -305,7 +314,7 @@ public class JpaEntitySourceGenerator implements EntitySourceGenerator {
     private static class Src {
         private final StringBuilder sb = new StringBuilder();
         void ln(String s) { sb.append(s).append('\n'); }
-        void nl()         { sb.append('\n'); }
+        void nl() { sb.append('\n'); }
         @Override public String toString() { return sb.toString(); }
     }
 }
