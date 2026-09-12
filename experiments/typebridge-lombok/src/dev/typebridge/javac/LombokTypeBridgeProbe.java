@@ -38,28 +38,17 @@ import java.util.Set;
  */
 public final class LombokTypeBridgeProbe implements Plugin {
     @Override
-    public String getName() {
-        return "TypeBridgeLombokProbe";
-    }
+    public String getName() { return "TypeBridgeLombokProbe"; }
 
     @Override
     public void init(JavacTask task, String... args) {
         Context context = ((BasicJavacTask) task).getContext();
-        Engine engine = new Engine(
-                TreeMaker.instance(context),
-                Names.instance(context),
-                JavacElements.instance(context)
-        );
-
+        Engine engine = new Engine(TreeMaker.instance(context), Names.instance(context), JavacElements.instance(context));
         task.addTaskListener(new TaskListener() {
             private boolean rewritten;
-
             @Override public void started(TaskEvent e) {}
-
-            @Override
-            public void finished(TaskEvent e) {
-                if (e.getKind() == TaskEvent.Kind.PARSE
-                        && e.getCompilationUnit() instanceof JCTree.JCCompilationUnit unit) {
+            @Override public void finished(TaskEvent e) {
+                if (e.getKind() == TaskEvent.Kind.PARSE && e.getCompilationUnit() instanceof JCTree.JCCompilationUnit unit) {
                     engine.index(unit);
                     return;
                 }
@@ -80,7 +69,6 @@ public final class LombokTypeBridgeProbe implements Plugin {
         final String pkg;
         final Map<String, String> imports = new HashMap<>();
         final Map<String, String> declared = new HashMap<>();
-
         UnitInfo(JCTree.JCCompilationUnit unit) {
             pkg = unit.getPackageName() == null ? "" : unit.getPackageName().toString();
             for (JCTree def : unit.defs) {
@@ -101,7 +89,6 @@ public final class LombokTypeBridgeProbe implements Plugin {
                 }
             });
         }
-
         String resolve(String raw) {
             if (raw == null) return null;
             raw = raw.trim();
@@ -137,21 +124,16 @@ public final class LombokTypeBridgeProbe implements Plugin {
         private final Set<String> strongTypes = new java.util.LinkedHashSet<>();
 
         Engine(TreeMaker maker, Names names, JavacElements elements) {
-            this.maker = maker;
-            this.names = names;
-            this.elements = elements;
+            this.maker = maker; this.names = names; this.elements = elements;
         }
 
         void index(JCTree.JCCompilationUnit unit) {
             if (!units.add(unit)) return;
             UnitInfo info = new UnitInfo(unit);
             infos.put(unit, info);
-
             unit.accept(new com.sun.tools.javac.tree.TreeScanner() {
                 String owner = info.pkg;
-
-                @Override
-                public void visitClassDef(JCTree.JCClassDecl tree) {
+                @Override public void visitClassDef(JCTree.JCClassDecl tree) {
                     String previous = owner;
                     owner = previous.isBlank() ? tree.name.toString() : previous + "." + tree.name;
                     sourceTypes.add(owner);
@@ -163,17 +145,12 @@ public final class LombokTypeBridgeProbe implements Plugin {
         }
 
         void discoverGeneratedMembers() {
-            methods.clear();
-            relations.clear();
-
+            methods.clear(); relations.clear();
             for (String strongType : strongTypes) {
                 TypeElement type = elements.getTypeElement(strongType);
-                if (type == null) {
-                    throw new IllegalStateException("@StrongType symbol unavailable after processing: " + strongType);
-                }
+                if (type == null) throw new IllegalStateException("@StrongType symbol unavailable after processing: " + strongType);
                 collectStrongRelation(type);
             }
-
             for (String sourceType : sourceTypes) {
                 TypeElement type = elements.getTypeElement(sourceType);
                 if (type != null) collectType(type);
@@ -186,14 +163,9 @@ public final class LombokTypeBridgeProbe implements Plugin {
                     .map(e -> (ExecutableElement) e)
                     .filter(e -> e.getParameters().size() == 1)
                     .toList();
-            if (unaryConstructors.size() != 1) {
-                throw new IllegalStateException("@StrongType requires exactly one unary constructor: "
-                        + type.getQualifiedName());
-            }
+            if (unaryConstructors.size() != 1) throw new IllegalStateException("@StrongType requires exactly one unary constructor: " + type.getQualifiedName());
             ExecutableElement constructor = unaryConstructors.get(0);
-            String raw = canonical(constructor.getParameters().get(0).asType().toString());
-            String strong = canonical(type.asType().toString());
-            relations.add(new Relation(raw, strong));
+            relations.add(new Relation(canonical(constructor.getParameters().get(0).asType().toString()), canonical(type.asType().toString())));
         }
 
         private void collectType(TypeElement type) {
@@ -201,14 +173,9 @@ public final class LombokTypeBridgeProbe implements Plugin {
             for (Element member : type.getEnclosedElements()) {
                 if (member.getKind() == ElementKind.METHOD) {
                     ExecutableElement method = (ExecutableElement) member;
-                    java.util.List<String> params = method.getParameters().stream()
-                            .map(p -> canonical(p.asType().toString()))
-                            .toList();
-                    methods.add(new MethodSig(owner, method.getSimpleName().toString(), params,
-                            canonical(method.getReturnType().toString())));
-                } else if (member.getKind().isClass() || member.getKind().isInterface()) {
-                    collectType((TypeElement) member);
-                }
+                    java.util.List<String> params = method.getParameters().stream().map(p -> canonical(p.asType().toString())).toList();
+                    methods.add(new MethodSig(owner, method.getSimpleName().toString(), params, canonical(method.getReturnType().toString())));
+                } else if (member.getKind().isClass() || member.getKind().isInterface()) collectType((TypeElement) member);
             }
         }
 
@@ -217,127 +184,76 @@ public final class LombokTypeBridgeProbe implements Plugin {
                 UnitInfo info = infos.get(unit);
                 unit.accept(new com.sun.tools.javac.tree.TreeTranslator() {
                     boolean inScope;
+                    boolean inMethod;
                     Map<String, String> classFields = new LinkedHashMap<>();
                     Map<String, String> locals = new LinkedHashMap<>();
 
-                    @Override
-                    public void visitClassDef(JCTree.JCClassDecl tree) {
+                    @Override public void visitClassDef(JCTree.JCClassDecl tree) {
                         boolean previousScope = inScope;
                         Map<String, String> previousFields = classFields;
                         inScope = previousScope || hasAnnotation(tree.mods.annotations, "AdaptationScope");
                         classFields = new LinkedHashMap<>();
-                        for (JCTree def : tree.defs) {
-                            if (def instanceof JCTree.JCVariableDecl field && field.vartype != null) {
-                                classFields.put(field.name.toString(), canonical(info.resolve(field.vartype.toString())));
-                            }
-                        }
+                        for (JCTree def : tree.defs) if (def instanceof JCTree.JCVariableDecl field && field.vartype != null)
+                            classFields.put(field.name.toString(), canonical(info.resolve(field.vartype.toString())));
                         super.visitClassDef(tree);
                         classFields = previousFields;
                         inScope = previousScope;
                     }
 
-                    @Override
-                    public void visitMethodDef(JCTree.JCMethodDecl tree) {
-                        Map<String, String> previous = locals;
+                    @Override public void visitMethodDef(JCTree.JCMethodDecl tree) {
+                        Map<String, String> previousLocals = locals;
+                        boolean previousInMethod = inMethod;
                         locals = new LinkedHashMap<>(classFields);
-                        for (JCTree.JCVariableDecl param : tree.params) {
+                        for (JCTree.JCVariableDecl param : tree.params)
                             locals.put(param.name.toString(), canonical(info.resolve(param.vartype.toString())));
-                        }
+                        inMethod = true;
                         super.visitMethodDef(tree);
-                        locals = previous;
+                        inMethod = previousInMethod;
+                        locals = previousLocals;
                     }
 
-                    @Override
-                    public void visitVarDef(JCTree.JCVariableDecl tree) {
-                        if (tree.vartype != null && tree.sym != null && tree.sym.owner != null
-                                && tree.sym.owner.getKind() == ElementKind.METHOD) {
+                    @Override public void visitVarDef(JCTree.JCVariableDecl tree) {
+                        if (inMethod && tree.vartype != null)
                             locals.put(tree.name.toString(), canonical(info.resolve(tree.vartype.toString())));
-                        }
                         super.visitVarDef(tree);
                     }
 
-                    @Override
-                    public void visitApply(JCTree.JCMethodInvocation tree) {
+                    @Override public void visitApply(JCTree.JCMethodInvocation tree) {
                         super.visitApply(tree);
-                        if (!inScope) {
-                            result = tree;
-                            return;
-                        }
-
+                        if (!inScope) { result = tree; return; }
                         String name = calledName(tree.meth);
                         String receiver = canonical(receiverType(tree.meth, info, locals));
-                        if (name == null || receiver == null) {
-                            result = tree;
-                            return;
-                        }
-
+                        if (name == null || receiver == null) { result = tree; return; }
                         java.util.List<String> sources = new ArrayList<>();
                         for (JCTree.JCExpression arg : tree.args) {
                             String source = canonical(expressionType(arg, info, locals));
-                            if (source == null) {
-                                result = tree;
-                                return;
-                            }
+                            if (source == null) { result = tree; return; }
                             sources.add(source);
                         }
-
                         java.util.List<MethodSig> targets = methods.stream()
-                                .filter(m -> same(m.owner(), receiver))
-                                .filter(m -> m.name().equals(name))
-                                .filter(m -> m.params().size() == sources.size())
-                                .toList();
-                        if (targets.isEmpty()) {
-                            result = tree;
-                            return;
-                        }
-
-                        // Conservativity: if ordinary Java's exact source types already match a target,
-                        // TypeBridge does nothing and lets javac own the call.
-                        if (targets.stream().anyMatch(m -> exactParams(m.params(), sources))) {
-                            result = tree;
-                            return;
-                        }
-
+                                .filter(m -> same(m.owner(), receiver) && m.name().equals(name) && m.params().size() == sources.size()).toList();
+                        if (targets.isEmpty() || targets.stream().anyMatch(m -> exactParams(m.params(), sources))) { result = tree; return; }
                         java.util.List<AdaptedTarget> viable = new ArrayList<>();
                         for (MethodSig target : targets) {
                             java.util.List<Relation> perArg = new ArrayList<>();
                             boolean ok = true;
                             for (int i = 0; i < sources.size(); i++) {
-                                String source = sources.get(i);
-                                String expected = target.params().get(i);
-                                if (same(source, expected)) {
-                                    perArg.add(null);
-                                    continue;
-                                }
-                                java.util.List<Relation> matches = relations.stream()
-                                        .filter(r -> same(r.raw(), source) && same(r.strong(), expected))
-                                        .toList();
-                                if (matches.size() != 1) {
-                                    ok = false;
-                                    break;
-                                }
+                                String source = sources.get(i), expected = target.params().get(i);
+                                if (same(source, expected)) { perArg.add(null); continue; }
+                                java.util.List<Relation> matches = relations.stream().filter(r -> same(r.raw(), source) && same(r.strong(), expected)).toList();
+                                if (matches.size() != 1) { ok = false; break; }
                                 perArg.add(matches.get(0));
                             }
                             if (ok) viable.add(new AdaptedTarget(target, perArg));
                         }
-
-                        // Ambiguity remains a javac error; never guess between multiple elaborations.
-                        if (viable.size() != 1) {
-                            result = tree;
-                            return;
-                        }
-
+                        if (viable.size() != 1) { result = tree; return; }
                         AdaptedTarget chosen = viable.get(0);
                         List<JCTree.JCExpression> rewrittenArgs = List.nil();
                         for (int i = tree.args.size() - 1; i >= 0; i--) {
                             JCTree.JCExpression original = tree.args.get(i);
                             Relation relation = chosen.relations().get(i);
                             JCTree.JCExpression rewritten = original;
-                            if (relation != null) {
-                                JCTree.JCExpression strongType = qualifiedType(relation.strong());
-                                rewritten = maker.at(original.pos)
-                                        .NewClass(null, List.nil(), strongType, List.of(original), null);
-                            }
+                            if (relation != null) rewritten = maker.at(original.pos).NewClass(null, List.nil(), qualifiedType(relation.strong()), List.of(original), null);
                             rewrittenArgs = rewrittenArgs.prepend(rewritten);
                         }
                         tree.args = rewrittenArgs;
@@ -349,32 +265,17 @@ public final class LombokTypeBridgeProbe implements Plugin {
 
         private boolean exactParams(java.util.List<String> expected, java.util.List<String> actual) {
             if (expected.size() != actual.size()) return false;
-            for (int i = 0; i < expected.size(); i++) {
-                if (!same(expected.get(i), actual.get(i))) return false;
-            }
+            for (int i = 0; i < expected.size(); i++) if (!same(expected.get(i), actual.get(i))) return false;
             return true;
         }
-
         private String receiverType(JCTree.JCExpression method, UnitInfo info, Map<String, String> locals) {
             if (!(method instanceof JCTree.JCFieldAccess access)) return null;
             return expressionType(access.selected, info, locals);
         }
-
         private String expressionType(JCTree.JCExpression expression, UnitInfo info, Map<String, String> locals) {
             if (expression instanceof JCTree.JCIdent ident) {
                 String local = locals.get(ident.name.toString());
                 return local != null ? local : canonical(info.resolve(ident.name.toString()));
-            }
-            if (expression instanceof JCTree.JCFieldAccess access) {
-                String selectedType = canonical(expressionType(access.selected, info, locals));
-                if (selectedType == null) return null;
-                java.util.List<MethodSig> accessors = methods.stream()
-                        .filter(m -> same(m.owner(), selectedType))
-                        .filter(m -> m.name().equals(access.name.toString()))
-                        .filter(m -> m.params().isEmpty())
-                        .toList();
-                if (accessors.size() == 1) return accessors.get(0).returns();
-                return null;
             }
             if (expression instanceof JCTree.JCNewClass created) return canonical(info.resolve(created.clazz.toString()));
             if (expression instanceof JCTree.JCTypeCast cast) return canonical(info.resolve(cast.clazz.toString()));
@@ -382,12 +283,10 @@ public final class LombokTypeBridgeProbe implements Plugin {
                 String called = calledName(call.meth);
                 String receiver = canonical(receiverType(call.meth, info, locals));
                 if (called == null) return null;
-
                 java.util.List<MethodSig> candidates = methods.stream()
                         .filter(m -> m.name().equals(called))
                         .filter(m -> receiver == null || same(m.owner(), receiver))
-                        .filter(m -> m.params().size() == call.args.size())
-                        .toList();
+                        .filter(m -> m.params().size() == call.args.size()).toList();
                 if (candidates.size() == 1) return candidates.get(0).returns();
             }
             if (expression instanceof JCTree.JCLiteral literal) {
@@ -402,7 +301,6 @@ public final class LombokTypeBridgeProbe implements Plugin {
             }
             return null;
         }
-
         private JCTree.JCExpression qualifiedType(String fqcn) {
             JCTree.JCExpression expression = null;
             for (String part : canonical(fqcn).split("\\.")) {
@@ -418,17 +316,8 @@ public final class LombokTypeBridgeProbe implements Plugin {
         if (expression instanceof JCTree.JCFieldAccess access) return access.name.toString();
         return null;
     }
-
-    private static String canonical(String type) {
-        if (type == null) return null;
-        String t = type.trim().replace('$', '.');
-        return t.replace(" ", "");
-    }
-
-    private static boolean same(String a, String b) {
-        return a != null && b != null && canonical(a).equals(canonical(b));
-    }
-
+    private static String canonical(String type) { return type == null ? null : type.trim().replace('$', '.').replace(" ", ""); }
+    private static boolean same(String a, String b) { return a != null && b != null && canonical(a).equals(canonical(b)); }
     private static boolean hasAnnotation(List<JCTree.JCAnnotation> annotations, String simpleName) {
         for (AnnotationTree annotation : annotations) {
             String type = annotation.getAnnotationType().toString();
@@ -436,18 +325,10 @@ public final class LombokTypeBridgeProbe implements Plugin {
         }
         return false;
     }
-
     private static boolean isPrimitive(String type) {
-        return switch (type) {
-            case "byte", "short", "int", "long", "float", "double", "char", "boolean" -> true;
-            default -> false;
-        };
+        return switch (type) { case "byte", "short", "int", "long", "float", "double", "char", "boolean" -> true; default -> false; };
     }
-
     private static boolean isJavaLang(String type) {
-        return switch (type) {
-            case "String", "Integer", "Long", "Short", "Byte", "Float", "Double", "Character", "Boolean", "Object", "Void", "Number" -> true;
-            default -> false;
-        };
+        return switch (type) { case "String", "Integer", "Long", "Short", "Byte", "Float", "Double", "Character", "Boolean", "Object", "Void", "Number" -> true; default -> false; };
     }
 }
