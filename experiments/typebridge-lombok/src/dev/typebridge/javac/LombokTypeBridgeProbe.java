@@ -29,13 +29,12 @@ import java.util.Set;
 /**
  * ApiGeneratorManager integration engine for the TypeBridge strong-type model.
  *
- * Unlike the first probe, this implementation contains no CustomerId/customerId
- * special case. It discovers @StrongType declarations during parsing, waits for
- * annotation processing (including Lombok and record completion), resolves the
- * actual constructor relation from javac symbols, discovers generated methods,
- * and inserts a unique raw -> strong wrapper only inside @AdaptationScope.
+ * Discovers @StrongType declarations during parsing, waits for annotation
+ * processing (including Lombok and record completion), resolves constructor
+ * relations from javac symbols, discovers generated methods, and inserts only
+ * unique raw -> strong wrappers inside @AdaptationScope.
  *
- * Strong -> raw is intentionally never implicit.
+ * Strong -> raw and arbitrary conversion chains are intentionally never implicit.
  */
 public final class LombokTypeBridgeProbe implements Plugin {
     @Override
@@ -75,6 +74,7 @@ public final class LombokTypeBridgeProbe implements Plugin {
 
     private record Relation(String raw, String strong) {}
     private record MethodSig(String owner, String name, java.util.List<String> params, String returns) {}
+    private record AdaptedTarget(MethodSig method, java.util.List<Relation> relations) {}
 
     private static final class UnitInfo {
         final String pkg;
@@ -217,20 +217,29 @@ public final class LombokTypeBridgeProbe implements Plugin {
                 UnitInfo info = infos.get(unit);
                 unit.accept(new com.sun.tools.javac.tree.TreeTranslator() {
                     boolean inScope;
+                    Map<String, String> classFields = new LinkedHashMap<>();
                     Map<String, String> locals = new LinkedHashMap<>();
 
                     @Override
                     public void visitClassDef(JCTree.JCClassDecl tree) {
-                        boolean previous = inScope;
-                        inScope = previous || hasAnnotation(tree.mods.annotations, "AdaptationScope");
+                        boolean previousScope = inScope;
+                        Map<String, String> previousFields = classFields;
+                        inScope = previousScope || hasAnnotation(tree.mods.annotations, "AdaptationScope");
+                        classFields = new LinkedHashMap<>();
+                        for (JCTree def : tree.defs) {
+                            if (def instanceof JCTree.JCVariableDecl field && field.vartype != null) {
+                                classFields.put(field.name.toString(), canonical(info.resolve(field.vartype.toString())));
+                            }
+                        }
                         super.visitClassDef(tree);
-                        inScope = previous;
+                        classFields = previousFields;
+                        inScope = previousScope;
                     }
 
                     @Override
                     public void visitMethodDef(JCTree.JCMethodDecl tree) {
                         Map<String, String> previous = locals;
-                        locals = new LinkedHashMap<>();
+                        locals = new LinkedHashMap<>(classFields);
                         for (JCTree.JCVariableDecl param : tree.params) {
                             locals.put(param.name.toString(), canonical(info.resolve(param.vartype.toString())));
                         }
@@ -240,63 +249,110 @@ public final class LombokTypeBridgeProbe implements Plugin {
 
                     @Override
                     public void visitVarDef(JCTree.JCVariableDecl tree) {
-                        if (tree.vartype != null) locals.put(tree.name.toString(), canonical(info.resolve(tree.vartype.toString())));
+                        if (tree.vartype != null && tree.sym != null && tree.sym.owner != null
+                                && tree.sym.owner.getKind() == ElementKind.METHOD) {
+                            locals.put(tree.name.toString(), canonical(info.resolve(tree.vartype.toString())));
+                        }
                         super.visitVarDef(tree);
                     }
 
                     @Override
                     public void visitApply(JCTree.JCMethodInvocation tree) {
                         super.visitApply(tree);
-                        if (!inScope || tree.args.size() != 1) {
+                        if (!inScope) {
                             result = tree;
                             return;
                         }
 
                         String name = calledName(tree.meth);
                         String receiver = canonical(receiverType(tree.meth, info, locals));
-                        String source = canonical(expressionType(tree.args.get(0), info, locals));
-                        if (name == null || receiver == null || source == null) {
+                        if (name == null || receiver == null) {
                             result = tree;
                             return;
                         }
 
+                        java.util.List<String> sources = new ArrayList<>();
+                        for (JCTree.JCExpression arg : tree.args) {
+                            String source = canonical(expressionType(arg, info, locals));
+                            if (source == null) {
+                                result = tree;
+                                return;
+                            }
+                            sources.add(source);
+                        }
+
                         java.util.List<MethodSig> targets = methods.stream()
-                                .filter(m -> same(m.owner(), receiver) && m.name().equals(name) && m.params().size() == 1)
+                                .filter(m -> same(m.owner(), receiver))
+                                .filter(m -> m.name().equals(name))
+                                .filter(m -> m.params().size() == sources.size())
                                 .toList();
                         if (targets.isEmpty()) {
                             result = tree;
                             return;
                         }
 
-                        if (targets.stream().anyMatch(m -> same(m.params().get(0), source))) {
+                        // Conservativity: if ordinary Java's exact source types already match a target,
+                        // TypeBridge does nothing and lets javac own the call.
+                        if (targets.stream().anyMatch(m -> exactParams(m.params(), sources))) {
                             result = tree;
                             return;
                         }
 
-                        java.util.List<Relation> matches = new ArrayList<>();
+                        java.util.List<AdaptedTarget> viable = new ArrayList<>();
                         for (MethodSig target : targets) {
-                            String expected = target.params().get(0);
-                            for (Relation relation : relations) {
-                                if (same(relation.raw(), source) && same(relation.strong(), expected)) {
-                                    matches.add(relation);
+                            java.util.List<Relation> perArg = new ArrayList<>();
+                            boolean ok = true;
+                            for (int i = 0; i < sources.size(); i++) {
+                                String source = sources.get(i);
+                                String expected = target.params().get(i);
+                                if (same(source, expected)) {
+                                    perArg.add(null);
+                                    continue;
                                 }
+                                java.util.List<Relation> matches = relations.stream()
+                                        .filter(r -> same(r.raw(), source) && same(r.strong(), expected))
+                                        .toList();
+                                if (matches.size() != 1) {
+                                    ok = false;
+                                    break;
+                                }
+                                perArg.add(matches.get(0));
                             }
+                            if (ok) viable.add(new AdaptedTarget(target, perArg));
                         }
-                        if (matches.size() != 1) {
+
+                        // Ambiguity remains a javac error; never guess between multiple elaborations.
+                        if (viable.size() != 1) {
                             result = tree;
                             return;
                         }
 
-                        Relation relation = matches.get(0);
-                        JCTree.JCExpression original = tree.args.get(0);
-                        JCTree.JCExpression strongType = qualifiedType(relation.strong());
-                        JCTree.JCExpression wrapped = maker.at(original.pos)
-                                .NewClass(null, List.nil(), strongType, List.of(original), null);
-                        tree.args = List.of(wrapped);
+                        AdaptedTarget chosen = viable.get(0);
+                        List<JCTree.JCExpression> rewrittenArgs = List.nil();
+                        for (int i = tree.args.size() - 1; i >= 0; i--) {
+                            JCTree.JCExpression original = tree.args.get(i);
+                            Relation relation = chosen.relations().get(i);
+                            JCTree.JCExpression rewritten = original;
+                            if (relation != null) {
+                                JCTree.JCExpression strongType = qualifiedType(relation.strong());
+                                rewritten = maker.at(original.pos)
+                                        .NewClass(null, List.nil(), strongType, List.of(original), null);
+                            }
+                            rewrittenArgs = rewrittenArgs.prepend(rewritten);
+                        }
+                        tree.args = rewrittenArgs;
                         result = tree;
                     }
                 });
             }
+        }
+
+        private boolean exactParams(java.util.List<String> expected, java.util.List<String> actual) {
+            if (expected.size() != actual.size()) return false;
+            for (int i = 0; i < expected.size(); i++) {
+                if (!same(expected.get(i), actual.get(i))) return false;
+            }
+            return true;
         }
 
         private String receiverType(JCTree.JCExpression method, UnitInfo info, Map<String, String> locals) {
@@ -308,6 +364,17 @@ public final class LombokTypeBridgeProbe implements Plugin {
             if (expression instanceof JCTree.JCIdent ident) {
                 String local = locals.get(ident.name.toString());
                 return local != null ? local : canonical(info.resolve(ident.name.toString()));
+            }
+            if (expression instanceof JCTree.JCFieldAccess access) {
+                String selectedType = canonical(expressionType(access.selected, info, locals));
+                if (selectedType == null) return null;
+                java.util.List<MethodSig> accessors = methods.stream()
+                        .filter(m -> same(m.owner(), selectedType))
+                        .filter(m -> m.name().equals(access.name.toString()))
+                        .filter(m -> m.params().isEmpty())
+                        .toList();
+                if (accessors.size() == 1) return accessors.get(0).returns();
+                return null;
             }
             if (expression instanceof JCTree.JCNewClass created) return canonical(info.resolve(created.clazz.toString()));
             if (expression instanceof JCTree.JCTypeCast cast) return canonical(info.resolve(cast.clazz.toString()));
