@@ -41,6 +41,9 @@ jobs:
       - name: Benchmark generated API with and without TypeBridge
         run: bash experiments/typebridge-generator-ab/run.sh
 
+      - name: Benchmark runtime API vs full static strong API
+        run: bash experiments/typebridge-static-api-ab/run.sh
+
   frontend:
     name: Frontend
     runs-on: ubuntu-latest
