@@ -43,7 +43,7 @@ class JpaEntitySourceGeneratorStrongIdsTest {
         assertTrue(customerId.contains("@Embeddable"));
         assertTrue(customerId.contains("public CustomerId(UUID value)"));
         assertTrue(customerId.contains("public UUID value()"));
-        assertTrue(orderId.contains("public OrdersId(UUID value)"));
+        assertTrue(orderId.contains("public OrderId(UUID value)"));
 
         assertTrue(customer.contains("@EmbeddedId"));
         assertTrue(customer.contains("private CustomerId id;"));
