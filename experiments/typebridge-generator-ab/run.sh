@@ -129,7 +129,7 @@ fi
 echo "PASS: baseline and strong-id+TypeBridge mapper source are identical"
 echo "PASS: baseline and strong-id+TypeBridge runtime output are identical ($STRONG_OUTPUT)"
 echo "PASS: strong-domain exit stays explicit in StrongRunner via .value()"
-echo "PASS: JPA strong-id AttributeConverters compile with the generated entities"
+echo "PASS: JPA embedded strong IDs compile with the generated entities"
 
 # Compile-cost microbenchmark on the actual generated source sets. This is deliberately
 # reported as a tiny-project CI metric, not a full-build estimate.
@@ -145,7 +145,6 @@ for i in 1 2 3 4 5; do
     $BASELINE_SOURCES "$FIXTURE" "$BASELINE_RUNNER" >/dev/null 2>&1
   END=$(date +%s%N)
   echo $(( (END - START) / 1000000 )) >> "$BASE_TIMES"
-
 done
 for i in 1 2 3 4 5; do
   OUT="$BUILD/timing-strong-$i"
