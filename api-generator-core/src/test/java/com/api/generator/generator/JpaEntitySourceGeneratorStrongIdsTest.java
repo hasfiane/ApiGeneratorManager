@@ -18,10 +18,8 @@ class JpaEntitySourceGeneratorStrongIdsTest {
     @Test
     void baselineKeepsRawPrimaryKeyTypes() {
         Map<String, String> files = byPath(generator.generate(schema(), "demo.api"));
-
         String customer = files.get("demo/api/entity/Customer.java");
         String order = files.get("demo/api/entity/Order.java");
-
         assertNotNull(customer);
         assertNotNull(order);
         assertTrue(customer.contains("private UUID id;"));
@@ -30,40 +28,34 @@ class JpaEntitySourceGeneratorStrongIdsTest {
     }
 
     @Test
-    void strongModeGeneratesSemanticIdsAndExplicitJpaConverters() {
+    void strongModeGeneratesSemanticEmbeddableIds() {
         Map<String, String> files = byPath(generator.generateStrongIds(schema(), "demo.api"));
-
-        assertEquals(6, files.size());
+        assertEquals(4, files.size());
 
         String customerId = files.get("demo/api/types/CustomerId.java");
         String orderId = files.get("demo/api/types/OrderId.java");
-        String customerConverter = files.get("demo/api/types/CustomerIdJpaConverter.java");
         String customer = files.get("demo/api/entity/Customer.java");
         String order = files.get("demo/api/entity/Order.java");
 
         assertNotNull(customerId);
         assertNotNull(orderId);
-        assertNotNull(customerConverter);
         assertTrue(customerId.contains("@StrongType"));
-        assertTrue(customerId.contains("record CustomerId(UUID value)"));
-        assertTrue(orderId.contains("record OrderId(UUID value)"));
+        assertTrue(customerId.contains("@Embeddable"));
+        assertTrue(customerId.contains("public CustomerId(UUID value)"));
+        assertTrue(customerId.contains("public UUID value()"));
+        assertTrue(orderId.contains("public OrdersId(UUID value)"));
 
-        assertTrue(customerConverter.contains("AttributeConverter<CustomerId, UUID>"));
-        assertTrue(customerConverter.contains("value.value()"));
-        assertTrue(customerConverter.contains("new CustomerId(value)"));
-
+        assertTrue(customer.contains("@EmbeddedId"));
         assertTrue(customer.contains("private CustomerId id;"));
-        assertTrue(customer.contains("@Convert(converter = CustomerIdJpaConverter.class)"));
+        assertTrue(order.contains("@EmbeddedId"));
         assertTrue(order.contains("private OrderId id;"));
-        assertTrue(order.contains("@Convert(converter = OrderIdJpaConverter.class)"));
+        assertFalse(files.keySet().stream().anyMatch(path -> path.contains("JpaConverter")));
     }
 
     @Test
     void foreignKeyRelationshipSemanticsStayUnchanged() {
         Map<String, String> files = byPath(generator.generateStrongIds(schema(), "demo.api"));
         String order = files.get("demo/api/entity/Order.java");
-
-        // The current generator models FKs as object relationships, not duplicate scalar id fields.
         assertTrue(order.contains("@ManyToOne(fetch = FetchType.LAZY)"));
         assertTrue(order.contains("@JoinColumn(name = \"customer_id\")"));
         assertTrue(order.contains("private Customer customer;"));
@@ -77,9 +69,7 @@ class JpaEntitySourceGeneratorStrongIdsTest {
         users.getColumns().add(ColumnInfo.builder()
                 .name("id").jdbcType("bigint").autoIncrement(true).nullable(false).build());
         users.getPrimaryKeys().add("id");
-
         Map<String, String> files = byPath(generator.generateStrongIds(List.of(users), "demo.api"));
-
         assertEquals(1, files.size());
         assertTrue(files.get("demo/api/entity/Users.java").contains("private Long id;"));
         assertFalse(files.keySet().stream().anyMatch(path -> path.contains("UsersId")));
@@ -97,17 +87,11 @@ class JpaEntitySourceGeneratorStrongIdsTest {
         order.getColumns().add(uuid("customer_id", false));
         order.getPrimaryKeys().add("id");
         order.getForeignKeys().add(new ForeignKeyInfo("customer_id", "customer", "id"));
-
         return List.of(customer, order);
     }
 
     private static ColumnInfo uuid(String name, boolean autoIncrement) {
-        return ColumnInfo.builder()
-                .name(name)
-                .jdbcType("uuid")
-                .nullable(false)
-                .autoIncrement(autoIncrement)
-                .build();
+        return ColumnInfo.builder().name(name).jdbcType("uuid").nullable(false).autoIncrement(autoIncrement).build();
     }
 
     private static Map<String, String> byPath(List<GeneratedSource> sources) {
